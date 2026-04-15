@@ -4,6 +4,7 @@ import { useState, createContext, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 export const ThemeContext = createContext({ darkMode: true, openness: 50 });
@@ -11,11 +12,15 @@ export const ThemeContext = createContext({ darkMode: true, openness: 50 });
 export default function RoomLayout({ children }: { children: React.ReactNode }) {
   const [darkMode, setDarkMode] = useState(true);
   const [openness, setOpenness] = useState(50);
-  const [catState, setCatState] = useState<"sleeping" | "waking" | "yawning" | "walking" | "settling">("sleeping");
+  const [catState, setCatState] = useState<"sleeping" | "waking" | "yawning" | "walking" | "settling" | "eating">("sleeping");
   const [catPosition, setCatPosition] = useState({ x: 0, y: 0 });
   const [emberParticles, setEmberParticles] = useState<{ id: number; x: number; delay: number; dur: number }[]>([]);
+  const [catHunger, setCatHunger] = useState(45);
+  const [currentFood, setCurrentFood] = useState<string | null>(null);
   const pathname = usePathname();
   const isSubPage = pathname !== "/";
+  const router = useRouter();
+const [bookOpen, setBookOpen] = useState(false);
 
   const rayOpacity = openness / 100;
   const curtainWidth = `${50 - openness * 0.4}%`;
@@ -28,6 +33,14 @@ export default function RoomLayout({ children }: { children: React.ReactNode }) 
       dur: 1.5 + Math.random() * 1.5,
     }));
     setEmberParticles(particles);
+  }, []);
+
+  // Slowly increase hunger over time (cat gets hungrier if not fed)
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCatHunger((prev) => Math.min(100, prev + 8));
+    }, 45000);
+    return () => clearInterval(timer);
   }, []);
 
   const handleCatInteraction = async () => {
@@ -44,6 +57,17 @@ export default function RoomLayout({ children }: { children: React.ReactNode }) 
     setCatState("settling");
     await new Promise((r) => setTimeout(r, 800));
     setCatState("sleeping");
+  };
+
+  const handleFeed = (foodEmoji: string) => {
+    if (catState !== "sleeping") return;
+    setCurrentFood(foodEmoji);
+    setCatState("eating");
+    setCatHunger((prev) => Math.max(0, prev - 25));
+    setTimeout(() => {
+      setCurrentFood(null);
+      setCatState("sleeping");
+    }, 1600);
   };
 
   const navLinks = [
@@ -707,16 +731,6 @@ export default function RoomLayout({ children }: { children: React.ReactNode }) 
               )}
             </div>
 
-            {/* Mantle shelf */}
-            <div
-              className="absolute left-1/2 -translate-x-1/2 w-[240px] md:w-[540px] h-[16px] md:h-[24px]"
-              style={{
-                bottom: "calc(10vh + 120px)",
-                background: "linear-gradient(180deg, #3a2f22, #2a2016, #1a1208)",
-                borderTop: "1px solid rgba(198,169,122,0.3)",
-                boxShadow: "0 8px 30px rgba(0,0,0,0.99), inset 0 1px 2px rgba(198,169,122,0.15)",
-              }}
-            />
 
             {/* Mantle legs */}
             {[-1, 1].map((side) => (
@@ -750,11 +764,10 @@ export default function RoomLayout({ children }: { children: React.ReactNode }) 
             )}
           </div>
 
-          {/* ── WALL SCONCES ── */}
+          {/* ── WALL SCONCES (original - right one will be duplicated forward below) ── */}
           <div className={`absolute inset-0 pointer-events-none z-50 transition-all duration-700 ${isSubPage ? "opacity-15 blur-sm" : "opacity-100"}`}>
             {[
               { posClass: "left-2 md:left-8", armDir: "left" },
-              { posClass: "right-2 md:right-8", armDir: "right" },
             ].map((sconce, i) => (
               <div
                 key={i}
@@ -821,190 +834,444 @@ export default function RoomLayout({ children }: { children: React.ReactNode }) 
         </div>
         {/* ─── END BACKGROUND LAYER ─── */}
 
-        {/* ── TAPESTRY NAV ── */}
-        <div className="absolute top-[10vh] md:top-[14vh] right-[2vw] md:right-[3vw] w-[140px] md:w-[230px] h-[340px] md:h-[460px] z-[200] shadow-[12px_12px_28px_rgba(0,0,0,0.95)] rotate-1 origin-top pointer-events-auto">
-          <div
-            className="absolute -top-2 left-[-8px] right-[-8px] h-3 md:h-4 rounded-full border border-black"
-            style={{ background: "#0a0705" }}
-          />
-          <div
-            className="w-full h-full flex flex-col items-center p-2 md:p-3 relative overflow-hidden"
-            style={{
-              background: "linear-gradient(180deg, #4a0e0e 0%, #2d0808 50%, #1a0303 100%)",
-              border: "3px solid rgba(198,169,122,0.5)",
-              borderBottom: "6px solid rgba(198,169,122,0.5)",
-              boxShadow: "inset 0 0 25px rgba(0,0,0,0.9)",
-            }}
-          >
-            {/* Ornate top band */}
-            <div className="w-full h-7 md:h-9 flex items-center justify-center mt-1 mb-1" style={{ borderTop: "1.5px solid rgba(198,169,122,0.45)", borderBottom: "1.5px solid rgba(198,169,122,0.45)" }}>
-              <div className="w-full h-[1px]" style={{ background: "linear-gradient(90deg, transparent, rgba(198,169,122,0.3), transparent)" }} />
-            </div>
+        {/* ── SMALL SIDE TABLE & BOOK NAV (Bottom Right) ── */}
+        <div className="absolute bottom-[10vh] right-[3vw] w-[200px] md:w-[280px] h-[180px] md:h-[240px] z-[200] flex flex-col items-center">
+          
+          {/* The Table Top Surface (Depth perspective) */}
+          <div className="absolute w-[95%] h-[30px] rounded-t-xl z-10" style={{ bottom: "calc(10vh + 35px)", background: "#2a1f14", transform: "rotateX(70deg)", boxShadow: "0 10px 20px rgba(0,0,0,0.5)" }} />
+          
+          {/* Table Front Leg & Structure */}
+          <div className="absolute bottom-[10vh] w-[90%] h-[120px] md:h-[160px] bg-[#1a120c] z-0" style={{ clipPath: "polygon(5% 0, 95% 0, 85% 100%, 15% 100%)", border: "1.5px solid #2a1f14" }} />
 
-            {/* AMR monogram */}
-            <div
-              className="relative w-24 md:w-32 h-28 md:h-38 my-2 flex items-center justify-center"
-              style={{
-                border: "2.5px solid #c6a97a",
-                borderRadius: "6px",
-                boxShadow: "0 0 18px rgba(198,169,122,0.25), inset 0 0 12px rgba(0,0,0,0.5)",
-              }}
+          {/* ── THE BOOK (Sitting ON the table, Spine facing) ── */}
+          <div 
+            className="absolute bottom-[calc(10vh+60px)] left-1/2 -translate-x-1/2 z-[300] cursor-pointer"
+            onClick={() => setBookOpen(true)}
+          >
+            <motion.div
+              className="relative w-40 h-10 bg-[#3d1a10] rounded-sm shadow-[0_10px_20px_rgba(0,0,0,0.8)] border-2 border-[#5c2d1d] flex items-center justify-center group"
+              whileHover={{ y: -5, rotateX: 10 }}
             >
-              <div
-                className="absolute inset-1.5"
-                style={{ border: "1px solid rgba(198,169,122,0.45)", borderRadius: "4px" }}
+              {/* Tassel Bookmark */}
+              <motion.div 
+                className="absolute -left-2 top-2 w-1.5 h-16 bg-[#8b0000] rounded-b-full origin-top"
+                animate={{ rotate: [-3, 3, -3] }}
+                transition={{ duration: 4, repeat: Infinity }}
               />
-              {/* Corner ornaments */}
-              {["top-1 left-1", "top-1 right-1", "bottom-1 left-1", "bottom-1 right-1"].map((pos) => (
-                <div key={pos} className={`absolute ${pos} w-3 h-3`}>
-                  <div
-                    className="w-full h-full"
+              
+              {/* Spine Text (Cinzel archaic font) */}
+              <span className="text-[#c6a97a] text-[10px] tracking-[0.4em] font-serif font-bold group-hover:text-white transition-colors">
+                AMR'S BOOK
+              </span>
+              
+              {/* Book depth lines */}
+              <div className="absolute inset-y-0 right-1 w-[1px] bg-[#c6a97a]/30" />
+            </motion.div>
+          </div>
+        </div>
+
+         <AnimatePresence>
+          {bookOpen && (
+            <motion.div
+              className="fixed inset-0 z-[1000] flex items-center justify-center p-6"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0, transition: { delay: 0.5 } }} // Backdrop stays until book is fully shut
+            >
+              <div 
+                className="absolute inset-0 bg-[#050302]/95 backdrop-blur-xl" 
+                onClick={() => { setBookOpen(false); router.push("/"); }} 
+              />
+
+              {/* Perspective wrapper */}
+              <div className="relative w-full max-w-5xl" style={{ perspective: "1800px" }}>
+
+                {/* Book shell — NO BORDER here to prevent the "pop" during close */}
+                <div
+                  className="relative w-full h-[min(650px,90vh)] flex shadow-[0_0_100px_rgba(0,0,0,1)]"
+                  style={{ transformStyle: "preserve-3d" }}
+                >
+
+                  {/* ── LEFT PAGE ── */}
+                  <motion.div
+                    className="w-[50%] bg-[#f2e3c9] relative p-10 flex flex-col rounded-l-sm"
                     style={{
-                      borderTop: pos.includes("bottom") ? "none" : "1.5px solid #c6a97a",
-                      borderBottom: pos.includes("top") ? "none" : "1.5px solid #c6a97a",
-                      borderLeft: pos.includes("right") ? "none" : "1.5px solid #c6a97a",
-                      borderRight: pos.includes("left") ? "none" : "1.5px solid #c6a97a",
+                      backgroundImage: "url('https://www.transparenttextures.com/patterns/aged-paper.png')",
+                      transformOrigin: "right center",
+                      transformStyle: "preserve-3d",
+                      boxShadow: "inset -20px 0 30px rgba(0,0,0,0.1)",
+                    }}
+                    initial={{ rotateY: 90 }} // Starts "past" the screen
+                    animate={{ rotateY: 0 }}
+                    exit={{ 
+                      rotateY: 90, // Closes TOWARDS the viewer
+                      transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] } 
+                    }}
+                    transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <div className="absolute inset-6 border border-[#8b6230]/10 pointer-events-none" />
+                    <h3 className="font-serif text-[#3b1f06] text-[10px] tracking-[.4em] uppercase border-b border-[#8b6230]/20 pb-4 mb-8">
+                      Table of Contents
+                    </h3>
+                    <nav className="flex flex-col gap-4">
+                      {navLinks.map((item) => (
+                        <Link key={item.name} href={item.path} className="font-serif text-sm tracking-widest text-[#5c3810] hover:text-black">
+                          {item.name}
+                        </Link>
+                      ))}
+                    </nav>
+                  </motion.div>
+
+                  {/* ── SPINE (The hinge) ── */}
+                  <div className="w-1 bg-[#1a0c00] relative z-10 flex-shrink-0" />
+
+                  {/* ── RIGHT PAGE ── */}
+                  <motion.div
+                    className="flex-1 bg-[#f2e3c9] relative p-12 overflow-y-auto rounded-r-sm"
+                    style={{
+                      backgroundImage: "url('https://www.transparenttextures.com/patterns/aged-paper.png')",
+                      transformOrigin: "left center",
+                      transformStyle: "preserve-3d",
+                      boxShadow: "inset 20px 0 30px rgba(0,0,0,0.1)",
+                    }}
+                    initial={{ rotateY: -90 }} // Starts "past" the screen
+                    animate={{ rotateY: 0 }}
+                    exit={{ 
+                      rotateY: -90, // Closes TOWARDS the viewer
+                      transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] } 
+                    }}
+                    transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <button
+                      onClick={() => { setBookOpen(false); router.push("/"); }}
+                      className="absolute top-4 right-6 text-2xl text-[#8b6230]/40 hover:text-black z-30"
+                    >✕</button>
+
+                    <motion.div
+                      className="relative z-10 h-full"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0, transition: { duration: 0.1 } }} // Content disappears instantly when closing
+                    >
+                      {pathname === "/" ? (
+                        <div className="h-full flex flex-col items-center justify-center">
+                          <span className="text-6xl font-serif text-[#8b6230]/10 mb-4">AMR</span>
+                          <p className="italic font-serif text-[#5c3810]/60">Select a chapter.</p>
+                        </div>
+                      ) : (
+                        <div key={pathname}>{children}</div>
+                      )}
+                    </motion.div>
+                  </motion.div>
+
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+
+        {/* ── FORWARD RIGHT LANTERN (brought in front of tapestry without touching tapestry z-index or navigation) ── */}
+        {/* The original right sconce stays in the background layer (now only left remains there). This duplicate lantern + arm + plate sits at z-[250] with pointer-events-none so the tapestry nav remains fully clickable. */}
+        <div
+          className="absolute top-[22vh] md:top-[28vh] right-2 md:right-8 z-[250] pointer-events-none drop-shadow-[0_12px_22px_rgba(0,0,0,0.99)]"
+          style={{ transform: "scale(0.55) md:scale(0.85)", transformOrigin: "top center" }}
+        >
+          {/* Wall plate */}
+          <div
+            className="w-5 md:w-8 h-16 md:h-24 rounded-full border border-[#c6a97a]/40"
+            style={{ background: "linear-gradient(180deg, #1a120c, #0a0705)", boxShadow: "inset 0 0 10px rgba(0,0,0,0.8)" }}
+          >
+            {[1, 2].map((j) => (
+              <div key={j} className="absolute left-1/2 -translate-x-1/2 w-3 h-3 rounded-full border border-[#c6a97a]/30" style={{ top: j === 1 ? "15%" : "75%" }} />
+            ))}
+          </div>
+          {/* Horizontal arm (right side) */}
+          <div
+            className="absolute top-12 md:top-16 w-12 md:w-18 h-8 md:h-10 border-b-2 border-[#c6a97a]/60 border-r-2 rounded-br-full right-3"
+          />
+          {/* Lantern (the glowing part that was previously hidden behind tapestry) */}
+          <div
+            className="absolute top-2 md:top-4 right-9 md:right-14 w-7 md:w-11 h-11 md:h-16 rounded-sm backdrop-blur-sm relative"
+            style={{ border: "1.5px solid rgba(198,169,122,0.6)", background: "rgba(0,0,0,0.45)", boxShadow: "inset 0 0 12px rgba(0,0,0,0.95)" }}
+          >
+            {/* Top finial */}
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-0 h-0" style={{ borderLeft: "6px solid transparent", borderRight: "6px solid transparent", borderBottom: "6px solid rgba(198,169,122,0.6)" }} />
+            <div className="absolute -top-[1px] left-0 right-0 h-[1.5px]" style={{ background: "rgba(198,169,122,0.5)" }} />
+            <div className="absolute inset-2 rounded-sm border border-[#c6a97a]/20" />
+            <div className="absolute top-1/2 left-0 right-0 h-[1px]" style={{ background: "rgba(198,169,122,0.2)" }} />
+            {/* Glass panels */}
+            {[0, 1].map((p) => (
+              <div
+                key={p}
+                className="absolute top-1 bottom-3 w-[2px]"
+                style={{ [p === 0 ? "left" : "right"]: "33%", background: "rgba(198,169,122,0.25)" }}
+              />
+            ))}
+            {/* Candle */}
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-3 md:w-4 h-5 md:h-7">
+              <div
+                className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2 md:w-3 h-4 md:h-6"
+                style={{ background: "linear-gradient(90deg, rgba(231,216,180,0.5), rgba(198,169,122,0.3))" }}
+              />
+              {darkMode && (
+                <motion.div
+                  className="absolute top-0 left-1/2 -translate-x-1/2"
+                  animate={{ opacity: [0.85, 1, 0.9, 0.95, 0.88, 1], scaleY: [1, 1.08, 0.95, 1.05, 0.98, 1] }}
+                  transition={{ duration: 3, repeat: Infinity }}
+                >
+                  <div
+                    className="w-2 md:w-3 h-3 md:h-4 rounded-t-full"
+                    style={{
+                      background: "radial-gradient(ellipse at 40% 70%, #fbbf24, #f97316)",
+                      boxShadow: "0 0 20px 8px rgba(251,191,36,0.7), 0 0 40px 12px rgba(249,115,22,0.35)",
                     }}
                   />
-                </div>
-              ))}
-              <div className="flex flex-col items-center gap-1">
-                <span
-                  className="text-[#e8d4b8] text-2xl md:text-4xl font-bold tracking-widest leading-none"
-                  style={{
-                    textShadow: "2px 2px 5px rgba(0,0,0,1), 0 0 25px rgba(198,169,122,0.5)",
-                    fontFamily: "Cinzel, Playfair Display, serif",
-                  }}
-                >
-                  AMR
-                </span>
-                <div
-                  className="w-10 md:w-14 h-[1.5px]"
-                  style={{ background: "linear-gradient(90deg, transparent, #c6a97a, transparent)" }}
-                />
-              </div>
-            </div>
-
-            {/* Decorative band */}
-            <div
-              className="w-full h-5 md:h-6 rounded-full opacity-55 my-1 md:my-2"
-              style={{ border: "1.5px solid rgba(198,169,122,0.35)", background: "rgba(26,3,3,0.4)" }}
-            />
-
-            {/* Nav links */}
-            <nav className="w-full flex flex-col items-center gap-[3px] md:gap-1 px-1">
-              {navLinks.map((item) => {
-                const isActive = pathname === item.path;
-                return (
-                  <Link
-                    key={item.name}
-                    href={item.path}
-                    className={`w-full text-center py-[7px] md:py-[10px] px-2 md:px-3 text-[8px] md:text-[10px] tracking-[0.18em] uppercase transition-all duration-300 rounded-sm ${
-                      isActive
-                        ? "text-[#fff8e7] font-semibold"
-                        : "text-[#d4c4a8] hover:text-[#fff8e7]"
-                    }`}
-                    style={{
-                      fontFamily: "Cinzel, serif",
-                      background: isActive ? "rgba(198,169,122,0.25)" : "transparent",
-                      border: isActive ? "1px solid rgba(198,169,122,0.5)" : "1px solid transparent",
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!isActive) (e.currentTarget as HTMLElement).style.background = "rgba(198,169,122,0.08)";
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isActive) (e.currentTarget as HTMLElement).style.background = "transparent";
-                    }}
-                  >
-                    {item.name}
-                  </Link>
-                );
-              })}
-            </nav>
-
-            <div
-              className="w-full h-5 md:h-6 rounded-full opacity-55 my-1 md:my-2"
-              style={{ border: "1.5px solid rgba(198,169,122,0.35)", background: "rgba(26,3,3,0.4)" }}
-            />
-
-            {/* Tassels */}
-            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2 md:gap-3">
-              {[...Array(5)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  className="w-[6px] md:w-2 h-6 md:h-8 rounded-full"
-                  style={{ background: "linear-gradient(to bottom, #c6a97a, #3d3020)" }}
-                  animate={{ rotate: [-1, 1, -1] }}
-                  transition={{ duration: 2 + i * 0.2, repeat: Infinity, delay: i * 0.15 }}
-                />
-              ))}
+                </motion.div>
+              )}
             </div>
           </div>
         </div>
 
-        {/* ── CAT ── */}
-        <motion.div
-          className="absolute z-[200] cursor-pointer"
-          style={{ bottom: "calc(8vh + 175px)", left: "50%" }}
-          onClick={handleCatInteraction}
-          animate={{ x: catPosition.x, y: catPosition.y, opacity: isSubPage ? 0.25 : 1 }}
-          transition={{ duration: catState === "walking" ? 2 : 0.5, ease: "easeInOut" }}
-          whileHover={{ scale: 1.06 }}
+        {/* ── CAT ON CARPET (Floor Level) ── */}
+<div className="absolute bottom-[2vh] left-[20%] z-[200]">
+  {/* Small Ornate Carpet */}
+  <div 
+    className="relative w-40 h-16 bg-[#3d0f0f] rounded-[50%] opacity-90 shadow-2xl flex items-center justify-center overflow-hidden"
+    style={{ 
+      border: "2px solid #c6a97a33",
+      background: "radial-gradient(ellipse, #4a0e0e, #2d0808)" 
+    }}
+  >
+    {/* Carpet Pattern/Texture */}
+    <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "repeating-linear-gradient(45deg, #c6a97a 0px, transparent 2px, transparent 10px)" }} />
+    {/* Carpet Fringe */}
+    <div className="absolute inset-x-0 top-0 h-1 flex justify-around">
+      {[...Array(20)].map((_, i) => <div key={i} className="w-[1px] h-full bg-[#c6a97a66]" />)}
+    </div>
+    <div className="absolute inset-x-0 bottom-0 h-1 flex justify-around">
+      {[...Array(20)].map((_, i) => <div key={i} className="w-[1px] h-full bg-[#c6a97a66]" />)}
+    </div>
+  </div>
+
+  {/* Cat Silhouette */}
+  {/* ── CAT ON CARPET (Floor Level) ── */}
+<div className="absolute bottom-[2vh] left-[20%] z-[200]">
+  {/* Small Ornate Carpet */}
+  <div 
+    className="relative w-40 h-16 bg-[#3d0f0f] rounded-[50%] opacity-90 shadow-2xl flex items-center justify-center overflow-hidden"
+    style={{ 
+      border: "2px solid #c6a97a33",
+      background: "radial-gradient(ellipse, #4a0e0e, #2d0808)" 
+    }}
+  >
+    <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "repeating-linear-gradient(45deg, #c6a97a 0px, transparent 2px, transparent 10px)" }} />
+    <div className="absolute inset-x-0 top-0 h-1 flex justify-around">
+      {[...Array(20)].map((_, i) => <div key={i} className="w-[1px] h-full bg-[#c6a97a66]" />)}
+    </div>
+    <div className="absolute inset-x-0 bottom-0 h-1 flex justify-around">
+      {[...Array(20)].map((_, i) => <div key={i} className="w-[1px] h-full bg-[#c6a97a66]" />)}
+    </div>
+  </div>
+
+  {/* Detailed Cat */}
+  <motion.div
+    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-full cursor-pointer"
+    onClick={handleCatInteraction}
+    animate={{ x: catPosition.x, y: catPosition.y, opacity: isSubPage ? 0.25 : 1 }}
+    transition={{ duration: catState === "walking" ? 2 : 0.5, ease: "easeInOut" }}
+    whileHover={{ scale: 1.05 }}
+  >
+    <motion.div
+      className="w-20 md:w-24 h-10 md:h-12 flex items-end relative"
+      animate={{
+        scaleY: catState === "yawning" ? [1, 0.9, 1.1, 1] : catState === "sleeping" ? [1, 1.02, 1] : 1,
+        rotate: catState === "walking" ? [0, 2, -2, 0] : 0,
+      }}
+      transition={{ 
+        scaleY: { duration: 3, repeat: catState === "sleeping" ? Infinity : 0 },
+        rotate: { duration: 0.4, repeat: catState === "walking" ? Infinity : 0 } 
+      }}
+    >
+      {/* Body — layered radial gradients for fur depth */}
+      <div 
+        className="w-14 md:w-18 h-8 md:h-10 rounded-full relative shadow-lg"
+        style={{ 
+          background: "radial-gradient(ellipse at 40% 30%, #2a2520 0%, #0f0c09 55%, #050302 100%)",
+          boxShadow: "inset 0 2px 6px rgba(255,255,255,0.06), inset 0 -2px 4px rgba(0,0,0,0.8)"
+        }}
+      >
+        {/* Subtle fur highlight streak along spine */}
+        <div className="absolute top-1 left-3 right-4 h-[2px] rounded-full opacity-10"
+          style={{ background: "linear-gradient(to right, transparent, #a08060, transparent)" }} />
+        {/* Chest/belly lighter fur patch */}
+        <div className="absolute bottom-0 right-1 w-5 h-5 rounded-full opacity-20"
+          style={{ background: "radial-gradient(circle, #4a3d30, transparent)" }} />
+      </div>
+
+      {/* Detailed Head */}
+      <motion.div
+        className="absolute left-10 md:left-12 bottom-2 w-8 md:w-10 h-8 md:h-10 rounded-full"
+        style={{
+          background: "radial-gradient(ellipse at 45% 35%, #2a2520 0%, #0f0c09 60%, #050302 100%)",
+          boxShadow: "inset 0 2px 5px rgba(255,255,255,0.06), inset 0 -2px 3px rgba(0,0,0,0.9), 0 2px 8px rgba(0,0,0,0.7)"
+        }}
+        animate={{ 
+          y: catState === "yawning" ? [-2, -5, -2] : 0,
+          scale: catState === "yawning" ? [1, 1.1, 1] : 1 
+        }}
+      >
+        {/* Outer ears */}
+        <div className="absolute -top-2 left-0.5 w-3 h-4 bg-[#0a0805]" 
+          style={{ 
+            clipPath: "polygon(50% 0%, 0% 100%, 100% 100%)",
+            background: "linear-gradient(to bottom, #181310, #0a0805)"
+          }} 
+        />
+        <div className="absolute -top-2 right-0.5 w-3 h-4 bg-[#0a0805]" 
+          style={{ 
+            clipPath: "polygon(50% 0%, 0% 100%, 100% 100%)",
+            background: "linear-gradient(to bottom, #181310, #0a0805)"
+          }} 
+        />
+        {/* Inner ear pink */}
+        <div className="absolute -top-1 left-1 w-1.5 h-2.5 opacity-60"
+          style={{ clipPath: "polygon(50% 0%, 0% 100%, 100% 100%)", background: "#7a3535" }} />
+        <div className="absolute -top-1 right-1 w-1.5 h-2.5 opacity-60"
+          style={{ clipPath: "polygon(50% 0%, 0% 100%, 100% 100%)", background: "#7a3535" }} />
+
+      {/* Eyes — closed when sleeping, opening when yawning, open when awake */}
+<div className="absolute top-3.5 left-1.5 w-2 h-1.5 rounded-full overflow-hidden">
+  {catState === "sleeping" ? (
+    /* Closed eye — just a curved line */
+    <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[1.5px] rounded-full opacity-70"
+      style={{ background: "#2a2018" }} />
+  ) : catState === "yawning" ? (
+    /* Half-opening eye during yawn */
+    <motion.div
+      className="w-full rounded-full overflow-hidden"
+      initial={{ height: "1.5px" }}
+      animate={{ height: "100%" }}
+      transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
+      style={{ background: darkMode ? "#c1ff3d" : "#4a7a2a", boxShadow: darkMode ? "0 0 6px #c1ff3d" : "none" }}
+    >
+      <div className="absolute inset-x-0 top-0 h-full flex justify-center">
+        <div className="w-[3px] h-full rounded-full" style={{ background: "#080604" }} />
+      </div>
+      <div className="absolute top-0 left-0.5 w-[2px] h-[2px] rounded-full bg-white opacity-70" />
+    </motion.div>
+  ) : (
+    /* Fully open eye */
+    <div className="w-full h-full rounded-full overflow-hidden"
+      style={{ background: darkMode ? "#c1ff3d" : "#4a7a2a", boxShadow: darkMode ? "0 0 6px #c1ff3d" : "none" }}>
+      <div className="absolute inset-x-0 top-0 h-full flex justify-center">
+        <div className="w-[3px] h-full rounded-full" style={{ background: "#080604" }} />
+      </div>
+      <div className="absolute top-0 left-0.5 w-[2px] h-[2px] rounded-full bg-white opacity-70" />
+    </div>
+  )}
+</div>
+
+<div className="absolute top-3.5 right-1.5 w-2 h-1.5 rounded-full overflow-hidden">
+  {catState === "sleeping" ? (
+    <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[1.5px] rounded-full opacity-70"
+      style={{ background: "#2a2018" }} />
+  ) : catState === "yawning" ? (
+    <motion.div
+      className="w-full rounded-full overflow-hidden"
+      initial={{ height: "1.5px" }}
+      animate={{ height: "100%" }}
+      transition={{ duration: 0.8, delay: 0.7, ease: "easeOut" }}
+      style={{ background: darkMode ? "#c1ff3d" : "#4a7a2a", boxShadow: darkMode ? "0 0 6px #c1ff3d" : "none" }}
+    >
+      <div className="absolute inset-x-0 top-0 h-full flex justify-center">
+        <div className="w-[3px] h-full rounded-full" style={{ background: "#080604" }} />
+      </div>
+      <div className="absolute top-0 left-0.5 w-[2px] h-[2px] rounded-full bg-white opacity-70" />
+    </motion.div>
+  ) : (
+    <div className="w-full h-full rounded-full overflow-hidden"
+      style={{ background: darkMode ? "#c1ff3d" : "#4a7a2a", boxShadow: darkMode ? "0 0 6px #c1ff3d" : "none" }}>
+      <div className="absolute inset-x-0 top-0 h-full flex justify-center">
+        <div className="w-[3px] h-full rounded-full" style={{ background: "#080604" }} />
+      </div>
+      <div className="absolute top-0 left-0.5 w-[2px] h-[2px] rounded-full bg-white opacity-70" />
+    </div>
+  )}
+</div>
+
+        {/* Nose — small triangular */}
+        <div className="absolute top-[22px] left-1/2 -translate-x-1/2 w-[5px] h-[4px] opacity-80"
+          style={{ background: "#7a3535", clipPath: "polygon(50% 100%, 0% 0%, 100% 0%)" }} />
+
+        {/* Mouth lines */}
+        <div className="absolute top-[26px] left-1/2 -translate-x-1/2 flex gap-[2px]">
+          <div className="w-[4px] h-[1px] rounded-full bg-[#3a2a2a] opacity-60" style={{ transform: "rotate(20deg)" }} />
+          <div className="w-[4px] h-[1px] rounded-full bg-[#3a2a2a] opacity-60" style={{ transform: "rotate(-20deg)" }} />
+        </div>
+
+        {/* Whiskers — 3 per side, tapered */}
+        {/* Left whiskers */}
+        <div className="absolute top-[20px] left-[-14px] w-[14px] h-[1px] opacity-60"
+          style={{ background: "linear-gradient(to left, transparent, #c8bfb0)", transform: "rotate(-8deg)", transformOrigin: "right" }} />
+        <div className="absolute top-[22px] left-[-16px] w-[16px] h-[1px] opacity-50"
+          style={{ background: "linear-gradient(to left, transparent, #c8bfb0)", transform: "rotate(0deg)", transformOrigin: "right" }} />
+        <div className="absolute top-[24px] left-[-14px] w-[14px] h-[1px] opacity-60"
+          style={{ background: "linear-gradient(to left, transparent, #c8bfb0)", transform: "rotate(8deg)", transformOrigin: "right" }} />
+        {/* Right whiskers */}
+        <div className="absolute top-[20px] right-[-14px] w-[14px] h-[1px] opacity-60"
+          style={{ background: "linear-gradient(to right, transparent, #c8bfb0)", transform: "rotate(8deg)", transformOrigin: "left" }} />
+        <div className="absolute top-[22px] right-[-16px] w-[16px] h-[1px] opacity-50"
+          style={{ background: "linear-gradient(to right, transparent, #c8bfb0)", transform: "rotate(0deg)", transformOrigin: "left" }} />
+        <div className="absolute top-[24px] right-[-14px] w-[14px] h-[1px] opacity-60"
+          style={{ background: "linear-gradient(to right, transparent, #c8bfb0)", transform: "rotate(-8deg)", transformOrigin: "left" }} />
+      </motion.div>
+
+      {/* Front paws — two small rounded bumps */}
+      <div className="absolute bottom-[-4px] right-2 flex gap-1">
+        <div className="w-3 h-2 rounded-full" style={{ background: "#0f0c09", boxShadow: "inset 0 -1px 2px rgba(255,255,255,0.05)" }} />
+        <div className="w-3 h-2 rounded-full" style={{ background: "#0f0c09", boxShadow: "inset 0 -1px 2px rgba(255,255,255,0.05)" }} />
+      </div>
+
+      {/* Tail — tapered, curved with tip */}
+      <motion.div 
+        className="absolute -left-6 top-1 origin-right"
+        animate={{ rotate: [0, 15, -10, 0] }}
+        transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+      >
+        <div style={{
+          width: "28px", height: "10px",
+          background: "linear-gradient(to left, #050302, #1a1510)",
+          borderRadius: "50% 10% 10% 50%",
+          boxShadow: "inset 0 1px 2px rgba(255,255,255,0.04)"
+        }} />
+        {/* Tail tip slightly lighter */}
+        <div className="absolute left-0 top-[2px] w-2 h-2 rounded-full opacity-30"
+          style={{ background: "#3a3028" }} />
+      </motion.div>
+
+      {/* Z's and Yawning */}
+      {catState === "sleeping" && (
+        <div className="absolute -top-8 left-8">
+          <motion.span animate={{ opacity: [0, 1, 0], y: [0, -10], x: [0, 5] }} transition={{ duration: 2, repeat: Infinity }} className="absolute text-[#c6a97a] text-[10px] font-serif">z</motion.span>
+          <motion.span animate={{ opacity: [0, 1, 0], y: [0, -15], x: [0, -3] }} transition={{ duration: 2.5, repeat: Infinity, delay: 0.8 }} className="absolute text-[#c6a97a] text-[12px] left-3 font-serif">Z</motion.span>
+        </div>
+      )}
+      
+      {catState === "yawning" && (
+        <motion.div 
+          initial={{ scale: 0, opacity: 0 }} 
+          animate={{ scale: [0, 1, 0], opacity: [0, 1, 0], y: [0, -10] }} 
+          transition={{ duration: 1.5 }} 
+          className="absolute left-14 -top-2 text-[#c6a97a] text-lg"
         >
-          <motion.div
-            className="w-20 md:w-28 h-12 md:h-16 flex items-end relative origin-bottom"
-            animate={{
-              scaleY: catState === "yawning" ? [1, 0.9, 1.1, 1] : catState === "sleeping" ? [1, 1.02, 1] : 1,
-              rotate: catState === "walking" ? [0, 3, -3, 0] : 0,
-            }}
-            transition={{
-              scaleY: { duration: catState === "sleeping" ? 3 : 0.5, repeat: catState === "sleeping" ? Infinity : 0 },
-              rotate: { duration: 0.4, repeat: catState === "walking" ? Infinity : 0 },
-            }}
-          >
-            <div
-              className="w-14 md:w-20 h-7 md:h-10 rounded-full border-t border-[#3a332d] relative overflow-hidden"
-              style={{ background: "#14100c", boxShadow: "0 8px 18px rgba(0,0,0,0.99)" }}
-            >
-              <div
-                className="absolute inset-0 opacity-15"
-                style={{ backgroundImage: "repeating-linear-gradient(90deg, transparent, transparent 4px, rgba(0,0,0,0.4) 4px, rgba(0,0,0,0.4) 5px)" }}
-              />
-            </div>
-            <motion.div
-              className="absolute left-10 md:left-14 bottom-1.5 md:bottom-2 w-7 md:w-10 h-7 md:h-10 rounded-full border-t border-[#3a332d]"
-              style={{ background: "#14100c" }}
-              animate={{ y: catState === "yawning" ? [-3, -6, -3] : 0, scale: catState === "yawning" ? [1, 1.1, 1] : 1 }}
-              transition={{ duration: 0.5 }}
-            >
-              <div className="absolute top-2 md:top-3 left-1.5 md:left-2 w-1.5 md:w-2 h-[1.5px] bg-[#3a332d] rounded-full" />
-              <div className="absolute top-2 md:top-3 right-1.5 md:right-2 w-1.5 md:w-2 h-[1.5px] bg-[#3a332d] rounded-full" />
-            </motion.div>
-            <motion.div
-              className="absolute left-10 md:left-14 bottom-7 md:bottom-10 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-b-[7px] border-b-[#14100c] -rotate-12"
-              animate={{ rotate: catState === "yawning" ? -20 : -12 }}
-            />
-            <motion.div
-              className="absolute left-14 md:left-20 bottom-7 md:bottom-10 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-b-[7px] border-b-[#14100c] rotate-12"
-              animate={{ rotate: catState === "yawning" ? 20 : 12 }}
-            />
-            <motion.div
-              className="absolute -left-3 md:-left-4 bottom-0 w-8 md:w-12 h-3 md:h-4 rounded-full -rotate-12 origin-right"
-              style={{ background: "#14100c" }}
-              animate={{ rotate: catState === "walking" ? [-12, -25, -12] : -12 }}
-              transition={{ duration: 0.6, repeat: catState === "walking" ? Infinity : 0 }}
-            />
-            {catState === "sleeping" && (
-              <>
-                <motion.span animate={{ opacity: [0, 1, 0], y: [0, -8, -16], x: [0, 4, 8] }} transition={{ duration: 2, repeat: Infinity, delay: 0 }} className="absolute left-12 md:left-16 -top-2 md:-top-4 text-[10px] md:text-[12px] text-[#c6a97a] font-serif font-bold" style={{ textShadow: "1px 1px 2px rgba(0,0,0,0.8)" }}>z</motion.span>
-                <motion.span animate={{ opacity: [0, 1, 0], y: [0, -10, -20], x: [0, -2, -4] }} transition={{ duration: 2.5, repeat: Infinity, delay: 0.8 }} className="absolute left-16 md:left-20 -top-4 md:-top-6 text-[12px] md:text-[14px] text-[#c6a97a] font-serif font-bold" style={{ textShadow: "1px 1px 2px rgba(0,0,0,0.8)" }}>Z</motion.span>
-              </>
-            )}
-            {catState === "yawning" && (
-              <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: [0, 1.2, 0], opacity: [0, 1, 0], y: [0, -8, -16] }} transition={{ duration: 1.5 }} className="absolute left-14 -top-3 text-[#c6a97a] text-xl font-serif">○</motion.div>
-            )}
-          </motion.div>
+          ○
         </motion.div>
+      )}
+    </motion.div>
+  </motion.div>
+</div>
+</div>
 
         {/* ── DAY / NIGHT TOGGLE ── */}
         <div className="absolute top-3 md:top-8 right-3 md:right-8 z-[100]">
@@ -1048,11 +1315,17 @@ export default function RoomLayout({ children }: { children: React.ReactNode }) 
             input[type=range]::-moz-range-thumb { height: 20px; width: 20px; border-radius: 9999px; background: #c6a97a; border: 2px solid #3a2f22; cursor: pointer; box-shadow: 0 0 12px rgba(198,169,122,0.9); }
           `}</style>
         </div>
-
-        {/* ── PAGE CONTENT ── */}
-        <div className="relative z-50 w-full h-full overflow-y-auto pointer-events-none">
-          <div className="w-full h-full pointer-events-auto">{children}</div>
-        </div>
+ 
+     {/* ── PAGE CONTENT (Background Layer) ── */}
+<div className="relative z-50 w-full h-full overflow-y-auto pointer-events-none">
+  <div className="w-full h-full pointer-events-auto">
+    {/* If pathname is "/" (Home), we show nothing in the background.
+        If we are on a subpage (Gallery/About), we only show children 
+        if the book is CLOSED. This stops the text from appearing behind the book.
+    */}
+    {pathname !== "/" && !bookOpen ? children : null}
+  </div>
+</div>
       </div>
     </ThemeContext.Provider>
   );

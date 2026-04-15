@@ -1,12 +1,7 @@
 "use client";
-
-import { useContext } from "react";
 import { motion } from "framer-motion";
-import { ThemeContext } from "@/components/layout/RoomLayout";
 
-export default function Artifacts() {
-  const { darkMode } = useContext(ThemeContext);
-
+export default function Artifacts({ darkMode }: { darkMode: boolean }) {
   const concepts = [
     { title: "Symmetry", desc: "Balance, proportional grace." },
     { title: "Narrative", desc: "The quiet story an object tells." },
@@ -14,28 +9,19 @@ export default function Artifacts() {
   ];
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="h-full w-full flex flex-col items-center justify-center p-10 pt-40 max-w-7xl mx-auto"
-    >
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+    <div className="flex flex-col gap-6 w-full">
+      <h2 className="text-[#3b1f06] text-xl font-serif italic border-b border-[#8b6230]/20 pb-2">Artifacts</h2>
+      <div className="flex flex-col gap-4">
         {concepts.map((concept) => (
           <motion.div 
             key={concept.title}
-            whileHover={{ y: -10 }}
-            className={`border transition-colors ${darkMode ? 'border-[#c6a97a]/30 hover:border-[#ffd27a]/60' : 'border-[#8a724d]/30 hover:border-[#3a2f22]/60'} flex flex-col items-center p-10 text-center rounded-sm aspect-[3/4]`}
+            className="border border-[#8b6230]/20 p-4 rounded-sm bg-[#8b6230]/5"
           >
-            <div className={`w-12 h-12 border transition-colors rotate-45 mb-10 ${darkMode ? 'border-[#c6a97a]/40' : 'border-[#8a724d]/40'}`}/>
-            <h3 className={`text-2xl mb-4 ${darkMode ? 'text-[#e7d8b4]' : 'text-[#2a241b]'}`}>
-              {concept.title}
-            </h3>
-            <p className={`text-xs tracking-[0.2em] uppercase transition-colors ${darkMode ? 'text-[#c6a97a]/80' : 'text-[#5c4f3d]'}`}>
-              {concept.desc}
-            </p>
+            <h3 className="text-lg text-[#3b1f06] font-serif">{concept.title}</h3>
+            <p className="text-[10px] tracking-widest uppercase text-[#5c3810]/70">{concept.desc}</p>
           </motion.div>
         ))}
       </div>
-    </motion.div>
+    </div>
   );
 }
