@@ -852,50 +852,128 @@ const navLinks = [
               <div style={{ width:"clamp(16px,2.6vw,28px)", height:"4px", background:"radial-gradient(ellipse,rgba(0,0,0,0.5) 0%,transparent 70%)", filter:"blur(2px)" }} />
             </div>
 
-            {/* ── THE BOOK (center, with sparkle) ── */}
-            <div
-              className="absolute left-1/2 -translate-x-1/2 z-[300] cursor-pointer"
-              style={{ top: "0%", transform: "translateX(-50%) translateY(-10%)" }}
-              onClick={() => setBookOpen(true)}
-            >
-              {/* Glow */}
-              <div className="absolute inset-0 -z-10 flex items-center justify-center pointer-events-none">
-                <motion.div animate={{ opacity:[0.4,0.8,0.4], scale:[1,1.2,1] }} transition={{ duration:2, repeat:Infinity }}
-                  className="absolute w-20 h-20 bg-[#ffcc00] blur-xl rounded-full mix-blend-screen" />
-                <motion.div animate={{ opacity:[0.1,0.3,0.1], scale:[0.8,1.5,0.8] }} transition={{ duration:4, repeat:Infinity }}
-                  className="absolute w-64 h-64 bg-[#c6a97a] blur-[60px] rounded-full opacity-20" />
-                {sparkleParticles.map((p) => (
-                  <motion.div key={p.id}
-                    animate={{ y:[0,-40], x:[0,(p.id%2===0?20:-20)], opacity:[0,1,0], scale:[0,1.5,0] }}
-                    transition={{ duration:p.duration, repeat:Infinity, delay:p.id*0.5 }}
-                    className="absolute w-1 h-1 bg-white rounded-full shadow-[0_0_8px_#fff]"
-                    style={{ left:`${p.x}%` }} />
-                ))}
-              </div>
-
-              <motion.div
-                className="relative bg-[#3d1a10] rounded-sm shadow-[0_10px_25px_rgba(0,0,0,1)] border-2 border-[#5c2d1d] flex items-center justify-center group"
-                style={{ width:"clamp(110px,16vw,180px)", height:"clamp(30px,4.5vh,42px)" }}
-                whileHover={{ y:-5, rotateX:10, borderColor:"#f8f8f8" }}
+            {/* ── THE BOOK (3D Perspective Folio with Directional Arrow) ── */}
+              <div
+                className="absolute left-1/2 -translate-x-1/2 z-[300] cursor-pointer"
+                style={{ 
+                  bottom: "22%", 
+                  perspective: "1200px" 
+                }}
+                onClick={() => setBookOpen(true)}
               >
-                <motion.div className="absolute -top-14 left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none"
-                  animate={{ y:[0,-10,0] }} transition={{ duration:2, repeat:Infinity, ease:"easeInOut" }}>
-                  <span className="text-white text-[9px] tracking-[0.3em] font-bold uppercase mb-1 drop-shadow-[0_0_5px_#ffcc00] font-serif whitespace-nowrap">
-                    Click To Open Book
+                {/* 1. LAYERED AMBIENT SHADOW */}
+                <div 
+                  className="absolute inset-0 bg-black/70 blur-xl rounded-sm"
+                  style={{ 
+                    transform: "rotateX(60deg) scaleY(0.4) translateY(35px)",
+                    opacity: 0.8,
+                  }}
+                />
+
+                {/* 2. THE 3D BOOK OBJECT */}
+                <div
+                  className="relative group"
+                  style={{
+                    width: "clamp(110px, 12vw, 150px)",
+                    height: "clamp(80px, 9vw, 115px)",
+                    transformStyle: "preserve-3d",
+                    transform: "rotateX(58deg) rotateZ(-1deg)", 
+                  }}
+                >
+                  {/* Bottom Cover */}
+                  <div 
+                    className="absolute inset-0 bg-[#2a120a] rounded-sm shadow-2xl"
+                    style={{ transform: "translateZ(-10px)" }}
+                  />
+
+                  {/* Paper Stack */}
+                  <div 
+                    className="absolute inset-0 bg-[#e8d5b0] rounded-sm border-r border-b border-black/30"
+                    style={{ 
+                      transform: "translateZ(-5px)",
+                      boxShadow: "inset 0 0 10px rgba(0,0,0,0.2)"
+                    }}
+                  >
+                    <div className="absolute inset-0 opacity-30" 
+                      style={{ 
+                        backgroundImage: "linear-gradient(90deg, transparent 97%, rgba(0,0,0,0.5) 100%)", 
+                        backgroundSize: "2px 100%" 
+                      }} 
+                    />
+                  </div>
+
+                  {/* Front Cover */}
+                  <div
+                    className="absolute inset-0 bg-[#3d1a10] rounded-sm flex flex-col items-center justify-center overflow-hidden"
+                    style={{
+                      border: "1px solid #5c2d1d",
+                      background: "linear-gradient(to bottom, #4d2216 0%, #3d1a10 100%)",
+                      boxShadow: "inset -2px 0 10px rgba(0,0,0,0.5)",
+                      transform: "translateZ(0px)"
+                    }}
+                  >
+                    <div className="absolute inset-1.5 border border-[#c6a97a]/20 rounded-sm pointer-events-none" />
+                    <div className="relative z-10 flex flex-col items-center">
+                      <span className="text-[#c6a97a] text-[8px] md:text-[10px] tracking-[0.4em] font-serif font-bold drop-shadow-md">
+                        AMR&apos;S
+                      </span>
+                      <span className="text-[#c6a97a] text-[6px] md:text-[7px] tracking-[0.2em] font-serif opacity-60 uppercase mt-0.5">
+                        Archive
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Sparkles */}
+                  {sparkleParticles.map((p) => (
+                    <motion.div
+                      key={p.id}
+                      animate={{ y: [0, -25], opacity: [0, 0.7, 0], scale: [0, 1.2, 0] }}
+                      transition={{ duration: p.duration, repeat: Infinity, delay: p.id * 0.4 }}
+                      className="absolute w-[1px] h-[1px] bg-white rounded-full shadow-[0_0_5px_#fff]"
+                      style={{ left: `${p.x}%`, top: '40%', transform: "translateZ(8px)" }}
+                    />
+                  ))}
+                </div>
+
+                {/* 3. FLOATING INSTRUCTION + ARROW */}
+                <motion.div 
+                  className="absolute -top-20 left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: [0.4, 1, 0.4] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  <span className="text-white text-[7px] md:text-[8px] tracking-[0.3em] font-bold uppercase mb-2 drop-shadow-[0_0_8px_rgba(0,0,0,0.8)] font-serif whitespace-nowrap">
+                    Click to Open Book
                   </span>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fdfdfd" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="drop-shadow-[0_0_8px_#ffcc00]">
-                    <circle cx="12" cy="12" r="10" strokeDasharray="3 3" />
-                    <path d="M12 8v8M8 12l4 4 4-4" />
+                  
+                  {/* Animated Hand-drawn Style Arrow */}
+                  <svg 
+                    width="24" 
+                    height="32" 
+                    viewBox="0 0 24 32" 
+                    fill="none" 
+                    className="drop-shadow-lg"
+                  >
+                    <motion.path 
+                      d="M12 2V28M12 28L6 22M12 28L18 22" 
+                      stroke="#c6a97a" 
+                      strokeWidth="1.5" 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round"
+                      animate={{ y: [0, 5, 0] }}
+                      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                    />
+                    {/* Hand-drawn swirl flourish */}
+                    <path 
+                      d="M4 8C4 8 8 4 12 4C16 4 20 8 20 8" 
+                      stroke="#c6a97a" 
+                      strokeWidth="0.5" 
+                      strokeDasharray="2 2" 
+                      opacity="0.5"
+                    />
                   </svg>
                 </motion.div>
-                <motion.div className="absolute -left-2 top-2 w-1.5 h-16 bg-[#8b0000] rounded-b-full origin-top shadow-lg"
-                  animate={{ rotate:[-4,4,-4] }} transition={{ duration:3, repeat:Infinity }} />
-                <span className="text-[#c6a97a] text-[9px] md:text-[10px] tracking-[0.4em] font-serif font-bold group-hover:text-white group-hover:drop-shadow-[0_0_12px_#ffcc00] transition-all duration-300 whitespace-nowrap">
-                  AMR&apos;S BOOK
-                </span>
-                <div className="absolute inset-y-0 right-1 w-[1px] bg-[#c6a97a]/40" />
-              </motion.div>
-            </div>
+              </div>
 
           </div>{/* end table surface */}
 
@@ -1211,29 +1289,77 @@ const navLinks = [
                   initial={{ x: "-100%", opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   exit={{ x: "-100%", opacity: 0 }}
-                  transition={{ type: "spring", stiffness: 320, damping: 32 }}
                   className="md:hidden absolute inset-0 z-20 flex flex-col p-8 pt-14"
                   style={{
                     background: "#e8d5b0",
                     backgroundImage: "url('https://www.transparenttextures.com/patterns/aged-paper.png')",
                   }}
-                  onClick={() => setMobileTocOpen(false)}
                 >
-                  <div className="text-[#8b6230] opacity-20 text-xl mb-5 text-center">✦</div>
-                  <h3 className="font-serif text-[#3b1f06] text-[9px] tracking-[.45em] uppercase pb-4 mb-6 text-center"
-                    style={{ borderBottom: "0.5px solid rgba(139,98,48,0.25)" }}>
-                    Table of Contents
-                  </h3>
+                  <button 
+                    className="absolute top-4 right-4 text-[#3b1f06]/40"
+                    onClick={() => setMobileTocOpen(false)}
+                  >
+                    ✕
+                  </button>
+
                   <nav className="flex flex-col gap-6">
-                    {navLinks.map((item, i) => (
-                      <Link key={item.name} href={item.path}
-                        className="flex items-baseline gap-3 font-serif text-base text-[#5c3810]">
-                        <span className="text-[10px] tracking-widest opacity-40">
-                          {["I", "II", "III", "IV", "V"][i]}
-                        </span>
-                        <span className="tracking-wider">{item.name}</span>
-                      </Link>
-                    ))}
+                    {navLinks.map((item, i) => {
+                      const isCloseAction = item.name === "Close Book";
+                      const isResume = item.name === "Resume";
+
+                      // 1. MOBILE CLOSE ACTION
+                      if (isCloseAction) {
+                        return (
+                          <button
+                            key={item.name}
+                            onClick={() => {
+                              setMobileTocOpen(false); // Close the menu
+                              handleCloseBook();      // Close the actual book
+                            }}
+                            className="flex items-baseline gap-3 font-serif text-base text-[#8b0000] font-bold"
+                          >
+                            <span className="text-[10px] tracking-widest opacity-40">
+                              {["I", "II", "III", "IV", "V"][i]}
+                            </span>
+                            <span className="tracking-wider uppercase">{item.name}</span>
+                          </button>
+                        );
+                      }
+
+                      // 2. MOBILE RESUME ACTION
+                      if (isResume) {
+                        return (
+                          <a
+                            key={item.name}
+                            href={item.path}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={() => setMobileTocOpen(false)}
+                            className="flex items-baseline gap-3 font-serif text-base text-[#5c3810]"
+                          >
+                            <span className="text-[10px] tracking-widest opacity-40">
+                              {["I", "II", "III", "IV", "V"][i]}
+                            </span>
+                            <span className="tracking-wider">{item.name} ↗</span>
+                          </a>
+                        );
+                      }
+
+                      // 3. MOBILE STANDARD LINKS
+                      return (
+                        <Link 
+                          key={item.name} 
+                          href={item.path}
+                          onClick={() => setMobileTocOpen(false)} // Close menu when navigating
+                          className="flex items-baseline gap-3 font-serif text-base text-[#5c3810]"
+                        >
+                          <span className="text-[10px] tracking-widest opacity-40">
+                            {["I", "II", "III", "IV", "V"][i]}
+                          </span>
+                          <span className="tracking-wider">{item.name}</span>
+                        </Link>
+                      );
+                    })}
                   </nav>
                 </motion.div>
               )}
