@@ -1,10 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
-
-const inkColor = "#3b1f06";
-const mutedInk = "rgba(92, 56, 16, 0.7)";
+import { useState, useEffect, useRef } from "react";
 
 const categories = [
   {
@@ -18,26 +15,10 @@ const categories = [
         title: "The Amber Study",
         year: "MMXXIII",
         description: "A private study bathed in warm candlelight tones — raw walnut shelving and aged leather.",
-        images: ["/assets/images/amber-study.jpg", "/assets/images/amber-study-sketch.jpg"]
-      },
-            {
-        id: "int-",
-        title: "The Amber Study - 2  ",
-        year: "MMXXIII",
-        description: "A private study bathed in warm candlelight tones — raw walnut shelving and aged leather.",
-        images: ["/assets/images/amber-study.jpg", "/assets/images/amber-study-sketch.jpg"]
-      },
-              {
-        id: "int-",
-        title: "The Amber Study -3 ",
-        year: "MMXXIII",
-        description: "A private study bathed in warm candlelight tones — raw walnut shelving and aged leather.",
-        images: ["/assets/images/amber-study.jpg", "/assets/images/amber-study-sketch.jpg"]
+        images: ["/assets/images/amber-study.jpg", "/assets/images/amber-study-sketch.jpg", "/assets/images/amber-study-detail.jpg"]
       }
     ]
   },
-
-  
   {
     id: "furniture",
     label: "Furniture Design",
@@ -50,26 +31,100 @@ const categories = [
         year: "MMXXIII",
         description: "A bespoke writing desk crafted from reclaimed oak with brass hardware.",
         images: ["/assets/images/cartographer-desk.jpg", "/assets/images/cartographer-desk-sketch.jpg"]
-      },
-          {
-        id: "fur-1",
-        title: "The Cartographer's Desk",
-        year: "MMXXIII",
-        description: "A bespoke writing desk crafted from reclaimed oak with brass hardware.",
-        images: ["/assets/images/cartographer-desk.jpg", "/assets/images/cartographer-desk-sketch.jpg"]
       }
     ]
   }
 ];
 
-function CarouselLightbox({ images, initialIndex, onClose }: { images: string[], initialIndex: number, onClose: () => void }) {
+type ViewState = "menu" | "category";
+
+// ── Breadcrumb ──────────────────────────────────────────────────────────────
+function Breadcrumb({
+  view,
+  categoryLabel,
+  onGoHome,
+  onGoCategory,
+}: {
+  view: ViewState;
+  categoryLabel: string | null;
+  onGoHome: () => void;
+  onGoCategory: () => void;
+}) {
+  return (
+    <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.25em] text-[#8b6230]/50 mb-8 select-none">
+      <button
+        onClick={onGoHome}
+        className={`hover:opacity-100 transition-opacity ${view === "menu" ? "opacity-100 text-[#5c3810]" : "opacity-50"}`}
+      >
+        Archive
+      </button>
+
+      {view === "category" && categoryLabel && (
+        <>
+          <span className="opacity-30">›</span>
+          <span className="opacity-100 text-[#5c3810]">{categoryLabel}</span>
+        </>
+      )}
+    </div>
+  );
+}
+
+// ── Smart project image — fills available width, respects aspect ratio ──────
+function ProjectImage({
+  src,
+  onOpen,
+}: {
+  src: string;
+  onOpen: () => void;
+}) {
+  const imgRef = useRef<HTMLImageElement>(null);
+  const [isLandscape, setIsLandscape] = useState<boolean | null>(null);
+
+  const handleLoad = () => {
+    const el = imgRef.current;
+    if (el) setIsLandscape(el.naturalWidth >= el.naturalHeight);
+  };
+
+  // Before the image loads, use a generous placeholder height.
+  // Once loaded: landscape → constrain height to ~55vh, portrait → constrain to ~75vh.
+  const containerStyle =
+    isLandscape === null
+      ? "w-full min-h-[280px] max-h-[70vh]"
+      : isLandscape
+      ? "w-full max-h-[55vh]"  // wide image — shorter container
+      : "w-full max-h-[75vh]"; // portrait / square — taller container
+
+  return (
+    <div
+      className={`${containerStyle} bg-[#8b6230]/5 cursor-zoom-in overflow-hidden border border-[#8b6230]/10 flex items-center justify-center`}
+      onClick={onOpen}
+    >
+      <img
+        ref={imgRef}
+        src={src}
+        onLoad={handleLoad}
+        className="w-full h-full object-contain hover:scale-[1.02] transition-transform duration-1000"
+      />
+    </div>
+  );
+}
+
+// ── Lightbox ────────────────────────────────────────────────────────────────
+function CarouselLightbox({
+  images,
+  initialIndex,
+  onClose,
+}: {
+  images: string[];
+  initialIndex: number;
+  onClose: () => void;
+}) {
   const [index, setIndex] = useState(initialIndex);
 
-  // Keyboard navigation
   useEffect(() => {
     const handleKeys = (e: KeyboardEvent) => {
-      if (e.key === "ArrowRight") setIndex((prev) => (prev + 1) % images.length);
-      if (e.key === "ArrowLeft") setIndex((prev) => (prev - 1 + images.length) % images.length);
+      if (e.key === "ArrowRight") setIndex((p) => (p + 1) % images.length);
+      if (e.key === "ArrowLeft") setIndex((p) => (p - 1 + images.length) % images.length);
       if (e.key === "Escape") onClose();
     };
     window.addEventListener("keydown", handleKeys);
@@ -83,52 +138,89 @@ function CarouselLightbox({ images, initialIndex, onClose }: { images: string[],
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
-        className="fixed inset-0 z-[2000] flex flex-col items-center justify-center bg-[#050302]/95 backdrop-blur-xl p-4"
+        className="fixed inset-0 z-[6000] flex flex-col items-center justify-center bg-[#050302]/98 backdrop-blur-2xl p-4"
       >
-        <div className="absolute top-10 text-[10px] tracking-[0.4em] uppercase text-[#c6a97a] font-serif pointer-events-none">
+        {/* Go Back — top left */}
+        <button
+          className="absolute top-8 left-8 z-[6010] text-[#c6a97a]/50 hover:text-[#c6a97a] text-[10px] uppercase tracking-[0.4em] cursor-pointer transition-opacity flex items-center gap-2"
+          onClick={(e) => { e.stopPropagation(); onClose(); }}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+          Go Back
+        </button>
+
+        {/* Counter */}
+        <div className="absolute top-8 left-1/2 -translate-x-1/2 text-[#c6a97a]/30 text-[10px] uppercase tracking-[0.4em] pointer-events-none">
           Plate {index + 1} / {images.length}
         </div>
 
-        {images.length > 1 && (
-          <div className="absolute inset-x-4 top-1/2 -translate-y-1/2 flex justify-between z-[2010] pointer-events-none">
-            <button onClick={(e) => { e.stopPropagation(); setIndex((prev) => (prev - 1 + images.length) % images.length); }} 
-              className="pointer-events-auto p-4 text-[#c6a97a] opacity-50 hover:opacity-100 transition-all">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1"><path d="M15 18l-6-6 6-6"/></svg>
-            </button>
-            <button onClick={(e) => { e.stopPropagation(); setIndex((prev) => (prev + 1) % images.length); }} 
-              className="pointer-events-auto p-4 text-[#c6a97a] opacity-50 hover:opacity-100 transition-all">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1"><path d="M9 18l6-6-6-6"/></svg>
-            </button>
-          </div>
-        )}
+        {/* Image */}
+        <div className="relative w-full h-full flex items-center justify-center">
+          {images.length > 1 && (
+            <div className="absolute inset-x-2 flex justify-between z-[6020] pointer-events-none">
+              <button
+                onClick={(e) => { e.stopPropagation(); setIndex((p) => (p - 1 + images.length) % images.length); }}
+                className="pointer-events-auto p-4 text-[#c6a97a] opacity-30 hover:opacity-100 transition-all"
+              >
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
+                  <path d="M15 18l-6-6 6-6" />
+                </svg>
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); setIndex((p) => (p + 1) % images.length); }}
+                className="pointer-events-auto p-4 text-[#c6a97a] opacity-30 hover:opacity-100 transition-all"
+              >
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
+                  <path d="M9 18l6-6-6-6" />
+                </svg>
+              </button>
+            </div>
+          )}
 
-        <motion.img
-          key={index}
-          initial={{ opacity: 0, scale: 0.95, x: 20 }}
-          animate={{ opacity: 1, scale: 1, x: 0 }}
-          src={images[index]}
-          className="max-h-[75vh] object-contain shadow-2xl border border-[#c6a97a]/10"
-          onClick={(e) => e.stopPropagation()}
-        />
-
-        <button onClick={onClose} className="absolute bottom-12 font-serif italic text-[10px] text-[#c6a97a]/60 uppercase tracking-widest">
-          Close image
-        </button>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="w-full h-full flex items-center justify-center p-8"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <img
+                src={images[index]}
+                className="max-w-full max-h-[85vh] object-contain shadow-2xl border border-[#c6a97a]/10"
+              />
+            </motion.div>
+          </AnimatePresence>
+        </div>
       </motion.div>
     </AnimatePresence>
   );
 }
 
+// ── Main Gallery ─────────────────────────────────────────────────────────────
 export default function Gallery() {
-  const [view, setView] = useState<"menu" | "category">("menu");
+  const [view, setView] = useState<ViewState>("menu");
   const [activeCatId, setActiveCatId] = useState<string | null>(null);
   const [lightbox, setLightbox] = useState<{ images: string[]; index: number } | null>(null);
 
   const activeCategory = categories.find((c) => c.id === activeCatId);
 
+  const goHome = () => { setView("menu"); setActiveCatId(null); };
+  const goCategory = () => setView("category");
+
   return (
-    // THE OVERFLOW-Y-AUTO HERE ENSURES SCROLLING HAPPENS INSIDE THE BOOK PAGE
-    <div className="w-full h-full flex flex-col font-serif bg-transparent">
+    <div className="w-full h-full flex flex-col font-serif relative">
+      {/* Persistent breadcrumb — always visible */}
+      <Breadcrumb
+        view={view}
+        categoryLabel={activeCategory?.label ?? null}
+        onGoHome={goHome}
+        onGoCategory={goCategory}
+      />
+
       <AnimatePresence mode="wait">
         {view === "menu" ? (
           <motion.div
@@ -136,19 +228,17 @@ export default function Gallery() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="flex flex-col items-center justify-center text-center gap-8 py-8"
+            className="flex flex-col items-center gap-10"
           >
-            <div className="text-[#8b6230] opacity-30 text-2xl">❧</div>
             <h2 className="text-3xl italic text-[#3b1f06]">The Gallery Archive</h2>
-            
-            <div className="grid grid-cols-1 gap-4 w-full px-4">
+            <div className="grid grid-cols-1 gap-6 w-full max-w-md px-6">
               {categories.map((cat) => (
                 <button
                   key={cat.id}
                   onClick={() => { setActiveCatId(cat.id); setView("category"); }}
-                  className="p-6 border border-[#8b6230]/20 hover:bg-[#8b6230]/5 transition-all text-left"
+                  className="p-8 border border-[#8b6230]/20 hover:bg-[#8b6230]/5 text-left transition-all"
                 >
-                  <span className="text-[10px] opacity-30 block">{cat.roman}</span>
+                  <span className="text-[10px] opacity-30 block mb-2">{cat.roman}</span>
                   <h3 className="text-xl italic text-[#5c3810]">{cat.label}</h3>
                   <p className="text-[10px] opacity-60 italic">{cat.description}</p>
                 </button>
@@ -161,34 +251,38 @@ export default function Gallery() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
-            className="flex flex-col gap-12 py-4"
+            className="flex flex-col gap-10"
           >
-            <button onClick={() => setView("menu")} className="text-[9px] uppercase tracking-widest opacity-50 hover:opacity-100 flex items-center gap-2">
-              ← Archive Index
-            </button>
-            
-            <h2 className="text-2xl italic text-[#3b1f06] border-b border-[#8b6230]/20 pb-2">
+            <h2 className="text-2xl italic text-[#3b1f06] border-b border-[#8b6230]/20 pb-4">
               {activeCategory?.label}
             </h2>
 
-            <div className="space-y-16">
+            <div className="space-y-24">
               {activeCategory?.projects.map((project) => (
-                <div key={project.id} className="space-y-4">
-                  <div className="flex justify-between items-baseline">
-                    <h3 className="text-lg italic text-[#3b1f06]">{project.title}</h3>
-                    <span className="text-[9px] opacity-40">{project.year}</span>
+                <div key={project.id} className="space-y-5">
+                  <div className="flex justify-between items-end border-l border-[#8b6230]/20 pl-6">
+                    <h3 className="text-xl italic text-[#3b1f06]">{project.title}</h3>
+                    <span className="text-[10px] opacity-40">{project.year}</span>
                   </div>
 
-                  <div 
-                    className="relative aspect-[16/9] bg-[#8b6230]/5 cursor-zoom-in overflow-hidden border border-[#8b6230]/10"
-                    onClick={() => setLightbox({ images: project.images, index: 0 })}
-                  >
-                    <img src={project.images[0]} alt={project.title} className="w-full h-full object-cover" />
-                  </div>
+                  {/* Smart image — auto-sizes to landscape or portrait */}
+                  <ProjectImage
+                    src={project.images[0]}
+                    onOpen={() => setLightbox({ images: project.images, index: 0 })}
+                  />
 
-                  <p className="text-[11px] leading-relaxed italic text-[#5c3810]/80">
+                  <p className="text-[12px] leading-relaxed italic text-[#5c3810]/80 pr-6">
                     {project.description}
                   </p>
+
+                  {project.images.length > 1 && (
+                    <button
+                      onClick={() => setLightbox({ images: project.images, index: 0 })}
+                      className="text-[10px] uppercase tracking-[0.2em] text-[#8b6230]/40 hover:text-[#8b6230]/80 transition-colors"
+                    >
+                      View all {project.images.length} plates →
+                    </button>
+                  )}
                 </div>
               ))}
             </div>
@@ -196,21 +290,12 @@ export default function Gallery() {
         )}
       </AnimatePresence>
 
-      <footer className="mt-auto pt-12 border-t border-[#8b6230]/10 text-center pb-8 opacity-40">
-       
-        {/* ── COPYRIGHT & ATTRIBUTION ── */}
-        <div className="mt-2 text-center flex flex-col gap-1">
-          <p className="text-[8px] font-serif tracking-[0.2em] text-[#8b6230]/50 uppercase">
-            Design & Development by <span className="text-[#8b6230]/80 font-bold">ASM Aiman</span>
-          </p>
-          <p className="text-[7px] font-serif italic text-[#8b6230]/40">
-            © {new Date().getFullYear()} — All rights reserved in perpetuity.
-          </p>
-        </div>
-      </footer>
-
       {lightbox && (
-        <CarouselLightbox images={lightbox.images} initialIndex={lightbox.index} onClose={() => setLightbox(null)} />
+        <CarouselLightbox
+          images={lightbox.images}
+          initialIndex={lightbox.index}
+          onClose={() => setLightbox(null)}
+        />
       )}
     </div>
   );

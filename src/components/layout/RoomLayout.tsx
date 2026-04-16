@@ -93,12 +93,13 @@ export default function RoomLayout({ children }: { children: React.ReactNode }) 
     }, 1600);
   };
 
-  const navLinks = [
-    { name: "About me", path: "/about" },
-    { name: "Galleria", path: "/gallery" },
-    { name: "Contact", path: "/contact" },
-  ];
-
+const navLinks = [
+  { name: "About me", path: "/about" },
+  { name: "Galleria", path: "/gallery" },
+  { name: "Contact", path: "/contact" },
+  { name: "Resume", path: "/assets/cv.pdf" }, // Point directly to the file
+  { name: "Close Book", path: "/" },
+];
   // Rich velvet fabric with deep folds - layered for depth
   const velvetFabric = (base: string, mid: string, dark: string) => `
     repeating-linear-gradient(
@@ -973,30 +974,30 @@ export default function RoomLayout({ children }: { children: React.ReactNode }) 
         >
 
           {/* ════════════════════════════════
-              LEFT PAGE  (hidden on mobile → slides in via tab)
-          ════════════════════════════════ */}
-          <motion.div
-            className="hidden md:flex w-[46%] relative flex-col rounded-l-sm overflow-hidden"
-            style={{
-              transformOrigin: "right center",
-              transformStyle: "preserve-3d",
-              background: "#e8d5b0",
-              backgroundImage: `
-                url('https://www.transparenttextures.com/patterns/aged-paper.png'),
-                repeating-linear-gradient(
-                  0deg,
-                  transparent,
-                  transparent 27px,
-                  rgba(139,98,48,0.06) 27px,
-                  rgba(139,98,48,0.06) 28px
-                )
-              `,
-              boxShadow: "inset -18px 0 35px rgba(0,0,0,0.15), inset 4px 0 8px rgba(0,0,0,0.05)",
-            }}
-            initial={{ rotateY: 90 }}
-            animate={{ rotateY: 0 }}
-            exit={{ rotateY: 90, transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] } }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            LEFT PAGE (hidden on mobile → slides in via tab)
+        ════════════════════════════════ */}
+        <motion.div
+          className="hidden md:flex w-[46%] relative flex-col rounded-l-sm overflow-hidden"
+          style={{
+            transformOrigin: "right center",
+            transformStyle: "preserve-3d",
+            background: "#e8d5b0",
+            backgroundImage: `
+              url('https://www.transparenttextures.com/patterns/aged-paper.png'),
+              repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 27px,
+                rgba(139,98,48,0.06) 27px,
+                rgba(139,98,48,0.06) 28px
+              )
+            `,
+            boxShadow: "inset -18px 0 35px rgba(0,0,0,0.15), inset 4px 0 8px rgba(0,0,0,0.05)",
+          }}
+          initial={{ rotateY: 90 }}
+          animate={{ rotateY: 0 }}
+          exit={{ rotateY: 90, transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] } }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           >
             {/* Worn edge — left side */}
             <div className="absolute left-0 top-0 bottom-0 w-3 pointer-events-none"
@@ -1043,20 +1044,65 @@ export default function RoomLayout({ children }: { children: React.ReactNode }) 
 
               <div className="w-4 h-[1px] bg-[#8b6230]/30 mx-auto mb-8" />
 
-              <nav className="flex flex-col gap-5">
-                {navLinks.map((item, i) => (
-                  <Link key={item.name} href={item.path}
-                    className="group flex items-baseline gap-3 font-serif text-sm text-[#5c3810] hover:text-[#1a0800] transition-colors duration-300">
+             <nav className="flex flex-col gap-5">
+            {navLinks.map((item, i) => {
+              const isCloseAction = item.name === "Close Book";
+              const isResume = item.name === "Resume";
+
+              // Scenario A: The Resume (Opens your PDF in a new tab)
+              if (isResume) {
+                return (
+                  <a
+                    key={item.name}
+                    href={item.path}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-baseline gap-3 font-serif text-sm text-[#5c3810] hover:text-[#1a0800] transition-colors duration-300"
+                  >
                     <span className="text-[9px] tracking-widest opacity-40 font-serif" style={{ minWidth: "18px" }}>
                       {["I", "II", "III", "IV", "V"][i]}
                     </span>
                     <span className="flex-1 tracking-wider">{item.name}</span>
-                    <span className="opacity-0 group-hover:opacity-30 transition-opacity text-[8px] tracking-widest">
-                      ···
+                    <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[10px]">↗</span>
+                  </a>
+                );
+              }
+
+              // Scenario B: Close Book (Runs your handleCloseBook function)
+              if (isCloseAction) {
+                return (
+                  <button
+                    key={item.name}
+                    onClick={handleCloseBook}
+                    className="group flex items-baseline gap-3 font-serif text-sm text-[#5c3810] hover:text-[#8b0000] transition-colors duration-300 text-left"
+                  >
+                    <span className="text-[9px] tracking-widest opacity-40 font-serif" style={{ minWidth: "18px" }}>
+                      {["I", "II", "III", "IV", "V"][i]}
                     </span>
-                  </Link>
-                ))}
-              </nav>
+                    <span className="flex-1 tracking-wider uppercase font-bold">{item.name}</span>
+                    <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[10px]">✕</span>
+                  </button>
+                );
+              }
+
+              // Scenario C: Standard Links (Galleria, About, etc.)
+              return (
+                <Link 
+                  key={item.name} 
+                  href={item.path}
+                  className="group flex items-baseline gap-3 font-serif text-sm text-[#5c3810] hover:text-[#1a0800] transition-colors duration-300"
+                >
+                  <span className="text-[9px] tracking-widest opacity-40 font-serif" style={{ minWidth: "18px" }}>
+                    {["I", "II", "III", "IV", "V"][i]}
+                  </span>
+                  <span className="flex-1 tracking-wider">{item.name}</span>
+                  <span className="opacity-0 group-hover:opacity-30 transition-opacity text-[8px] tracking-widest">
+                    ···
+                  </span>
+                </Link>
+              );
+            })}
+          </nav>
 
               {/* Page number */}
               <div className="mt-auto text-center">
@@ -1144,15 +1190,7 @@ export default function RoomLayout({ children }: { children: React.ReactNode }) 
                 stroke="rgba(139,98,48,0.1)" strokeWidth="0.5" fill="none" />
             </svg>
 
-            {/* ── Close (top-right) ── */}
-            <button
-              onClick={handleCloseBook}
-              className="absolute top-4 right-5 z-30 group flex items-center gap-1.5 font-serif italic text-[10px] tracking-[0.2em] text-[#8b6230]/40 hover:text-[#3b1f06]/70 transition-colors duration-200"
-            >
-              <span className="hidden sm:inline">close</span>
-              <span className="opacity-60 group-hover:opacity-100 transition-opacity text-base leading-none">✕</span>
-            </button>
-
+           
             {/* ── Mobile TOC toggle ── */}
             <button
               className="md:hidden absolute top-4 left-4 z-30 flex items-center gap-1.5 font-serif italic text-[10px] tracking-[0.2em] text-[#8b6230]/50 hover:text-[#3b1f06]/70 transition-colors"
@@ -1426,34 +1464,43 @@ export default function RoomLayout({ children }: { children: React.ReactNode }) 
             {darkMode ? <><span>☾</span><span className="hidden md:inline"> NIGHT</span></> : <><span>☀</span><span className="hidden md:inline"> MORNING</span></>}
           </button>
         </div>
-  
-                    {/* ── DRAGGABLE CURTAIN SLIDER ── */}
+            {/* ── DRAGGABLE CURTAIN SLIDER (Positioned Bottom-Right) ── */}
           <motion.div
             drag
             dragMomentum={false}
-            // Optional: constraints keep it from being dragged off-screen
-            dragConstraints={{ left: -100, right: 100, top: -500, bottom: 50 }} 
-            className="absolute bottom-[2vh] left-1/2 -translate-x-1/2 w-[120px] md:w-[150px] flex flex-col items-center z-[2000] pointer-events-auto p-2 rounded-lg backdrop-blur-md cursor-grab active:cursor-grabbing"
+            // Constraints updated: allow dragging 300px to the left, 0 to the right
+            dragConstraints={{ left: -300, right: 0, top: -500, bottom: 50 }} 
+            className="absolute bottom-[4vh] right-[3vw] w-[130px] md:w-[160px] flex flex-col items-center z-[2000] pointer-events-auto p-3 rounded-lg backdrop-blur-md cursor-grab active:cursor-grabbing"
             style={{ 
-              background: "rgba(0,0,0,0.5)", 
-              border: "1px solid rgba(198,169,122,0.2)",
+              background: "rgba(0,0,0,0.6)", 
+              border: "1px solid rgba(198,169,122,0.3)",
               boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
-              touchAction: "none" // Prevents page scrolling while dragging on mobile
+              touchAction: "none" 
             }}
           >
             {/* Drag Handle Visual */}
-            <div className="flex gap-1 mb-1 opacity-30">
+            <div className="flex gap-1.5 mb-2 opacity-40">
               <div className="w-1 h-1 rounded-full bg-[#c6a97a]" />
               <div className="w-1 h-1 rounded-full bg-[#c6a97a]" />
               <div className="w-1 h-1 rounded-full bg-[#c6a97a]" />
             </div>
 
-            <span
-              className="text-[6px] md:text-[8px] tracking-[0.2em] uppercase mb-1 md:mb-2 font-sans transition-colors duration-500 select-none pointer-events-none"
-              style={{ color: darkMode ? "#c6a97a" : "#fcd34d" }}
+            {/* Instruction Hint with Pulse Animation */}
+            <motion.div 
+              className="flex flex-col items-center mb-2"
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
             >
-              Drape Pulley
-            </span>
+              <span
+                className="text-[7px] md:text-[9px] tracking-[0.2em] uppercase font-sans font-bold text-center select-none pointer-events-none"
+                style={{ color: darkMode ? "#c6a97a" : "#fcd34d" }}
+              >
+                Drape Pulley
+              </span>
+              <span className="text-[5px] md:text-[7px] tracking-[0.1em] italic opacity-60 text-white font-sans text-center mt-0.5">
+                Slide to open/close curtains
+              </span>
+            </motion.div>
 
             <input
               type="range"
@@ -1461,34 +1508,25 @@ export default function RoomLayout({ children }: { children: React.ReactNode }) 
               max="100"
               value={openness}
               onChange={(e) => setOpenness(Number(e.target.value))}
-              // Important: stopPropagation prevents the drag from triggering when just sliding
               onPointerDown={(e) => e.stopPropagation()} 
               className="w-full h-4 cursor-pointer"
               style={{ WebkitAppearance: "none", appearance: "none", background: "transparent" }}
             />
 
             <style jsx>{`
-              @keyframes fringe-sway {
-                0%, 100% { transform: rotate(0deg); }
-                25%       { transform: rotate(1deg); }
-                75%       { transform: rotate(-1deg); }
-              }
-              .curtain-fringe {
-                animation: fringe-sway linear infinite;
-              }
               input[type=range]::-webkit-slider-runnable-track { 
                 width: 100%; height: 4px; background: #1a120c; border-radius: 9999px; border: 1px solid #3a2f22; 
               }
               input[type=range]::-webkit-slider-thumb { 
-                height: 14px; width: 14px; border-radius: 9999px; background: #c6a97a; border: 1.5px solid #3a2f22; 
-                -webkit-appearance: none; margin-top: -6px; box-shadow: 0 0 8px rgba(198,169,122,0.6); 
+                height: 16px; width: 16px; border-radius: 9999px; background: #c6a97a; border: 1.5px solid #3a2f22; 
+                -webkit-appearance: none; margin-top: -6px; box-shadow: 0 0 10px rgba(198,169,122,0.8); 
               }
               input[type=range]::-moz-range-track { 
                 width: 100%; height: 4px; background: #1a120c; border-radius: 9999px; border: 1px solid #3a2f22; 
               }
               input[type=range]::-moz-range-thumb { 
-                height: 14px; width: 14px; border-radius: 9999px; background: #c6a97a; border: 1.5px solid #3a2f22; 
-                box-shadow: 0 0 8px rgba(198,169,122,0.6); 
+                height: 16px; width: 16px; border-radius: 9999px; background: #c6a97a; border: 1.5px solid #3a2f22; 
+                box-shadow: 0 0 10px rgba(198,169,122,0.8); 
               }
             `}</style>
           </motion.div>
