@@ -858,33 +858,82 @@ const [mobileTocOpen, setMobileTocOpen] = useState(false);
     }} 
   />
 
-  {/* ── THE BOOK (Sitting ON the table) ── */}
-  <div 
-    className="absolute left-1/2 -translate-x-1/2 z-[300] cursor-pointer"
-    style={{ 
-        bottom: "calc(2vh + 60px)"
-    }}
-    onClick={() => setBookOpen(true)}
-  >
+  {/* ── THE BOOK (With Vivid Sparkle Discovery) ── */}
+<div 
+  className="absolute left-1/2 -translate-x-1/2 z-[300] cursor-pointer"
+  style={{ bottom: "calc(2vh + 60px)" }}
+  onClick={() => setBookOpen(true)}
+>
+  {/* 1. VIVID MULTI-LAYER GLOW */}
+  <div className="absolute inset-0 -z-10 flex items-center justify-center pointer-events-none">
+    {/* Inner Core Glow */}
     <motion.div
-      className="relative w-36 md:w-40 h-9 md:h-10 bg-[#3d1a10] rounded-sm shadow-[0_10px_20px_rgba(0,0,0,0.8)] border-2 border-[#5c2d1d] flex items-center justify-center group"
-      whileHover={{ y: -5, rotateX: 10 }}
-    >
-      {/* Tassel Bookmark */}
-      <motion.div 
-        className="absolute -left-2 top-2 w-1.5 h-16 bg-[#8b0000] rounded-b-full origin-top"
-        animate={{ rotate: [-3, 3, -3] }}
-        transition={{ duration: 4, repeat: Infinity }}
+      animate={{ opacity: [0.4, 0.8, 0.4], scale: [1, 1.2, 1] }}
+      transition={{ duration: 2, repeat: Infinity }}
+      className="absolute w-20 h-20 bg-[#ffcc00] blur-xl rounded-full mix-blend-screen"
+    />
+    {/* Large Soft Aura */}
+    <motion.div
+      animate={{ opacity: [0.1, 0.3, 0.1], scale: [0.8, 1.5, 0.8] }}
+      transition={{ duration: 4, repeat: Infinity }}
+      className="absolute w-64 h-64 bg-[#c6a97a] blur-[60px] rounded-full opacity-20"
+    />
+    
+    {/* 2. SPARKLE PARTICLES */}
+    {[...Array(6)].map((_, i) => (
+      <motion.div
+        key={i}
+        animate={{ 
+          y: [0, -40], 
+          x: [0, (i % 2 === 0 ? 20 : -20)],
+          opacity: [0, 1, 0],
+          scale: [0, 1.5, 0] 
+        }}
+        transition={{ 
+          duration: 2 + Math.random() * 2, 
+          repeat: Infinity, 
+          delay: i * 0.5 
+        }}
+        className="absolute w-1 h-1 bg-white rounded-full shadow-[0_0_8px_#fff]"
+        style={{ left: `${Math.random() * 100}%` }}
       />
-      
-      {/* Spine Text */}
-      <span className="text-[#c6a97a] text-[9px] md:text-[10px] tracking-[0.4em] font-serif font-bold group-hover:text-white transition-colors">
-        AMR'S BOOK
-      </span>
-      
-      <div className="absolute inset-y-0 right-1 w-[1px] bg-[#c6a97a]/30" />
-    </motion.div>
+    ))}
   </div>
+
+  <motion.div
+    className="relative w-36 md:w-40 h-9 md:h-10 bg-[#3d1a10] rounded-sm shadow-[0_10px_25px_rgba(0,0,0,1)] border-2 border-[#5c2d1d] flex items-center justify-center group"
+    whileHover={{ y: -5, rotateX: 10, borderColor: "#f8f8f8" }}
+  >
+    {/* Floating "Instruction" — Now with a vivid pulse */}
+    <motion.div 
+      className="absolute -top-14 left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none"
+      animate={{ y: [0, -10, 0] }}
+      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+    >
+      <span className="text-white text-[9px] tracking-[0.3em] font-bold uppercase mb-1 drop-shadow-[0_0_5px_#ffcc00] font-serif">
+        Click To Open Book
+      </span>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fdfdfd" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="drop-shadow-[0_0_8px_#ffcc00]">
+        <circle cx="12" cy="12" r="10" strokeDasharray="3 3" />
+        <path d="M12 8v8M8 12l4 4 4-4" />
+      </svg>
+    </motion.div>
+
+    {/* Tassel Bookmark */}
+    <motion.div 
+      className="absolute -left-2 top-2 w-1.5 h-16 bg-[#8b0000] rounded-b-full origin-top shadow-lg"
+      animate={{ rotate: [-4, 4, -4] }}
+      transition={{ duration: 3, repeat: Infinity }}
+    />
+    
+    {/* Spine Text - Glows on hover */}
+    <span className="text-[#c6a97a] text-[9px] md:text-[10px] tracking-[0.4em] font-serif font-bold group-hover:text-white group-hover:drop-shadow-[0_0_12px_#ffcc00] transition-all duration-300">
+      AMR'S BOOK
+    </span>
+    
+    <div className="absolute inset-y-0 right-1 w-[1px] bg-[#c6a97a]/40" />
+  </motion.div>
+</div>
 </div>
 
          {/* book open animation start */}
@@ -1511,70 +1560,64 @@ const [mobileTocOpen, setMobileTocOpen] = useState(false);
             {darkMode ? <><span>☾</span><span className="hidden md:inline"> NIGHT</span></> : <><span>☀</span><span className="hidden md:inline"> MORNING</span></>}
           </button>
         </div>
-            {/* ── CURTAIN SLIDER (Bottom Center) ── */}
-            <div
-              className="absolute bottom-[2vh] left-1/2 -translate-x-1/2 w-[110px] md:w-[140px] flex flex-col items-center z-[2000] pointer-events-auto p-1.5 md:p-2 rounded-lg backdrop-blur-md"
-              style={{ 
-                background: "rgba(0,0,0,0.4)", 
-                border: "1px solid rgba(198,169,122,0.15)",
-                boxShadow: "0 4px 20px rgba(0,0,0,0.5)"
-              }}
-            >
-              <span
-                className="text-[6px] md:text-[8px] tracking-[0.2em] uppercase mb-1 md:mb-2 font-sans transition-colors duration-500 select-none"
-                style={{ color: darkMode ? "#c6a97a" : "#fcd34d" }}
-              >
-                Drape Pulley
-              </span>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={openness}
-                onChange={(e) => setOpenness(Number(e.target.value))}
-                className="w-full h-4 cursor-pointer"
-                style={{ WebkitAppearance: "none", appearance: "none", background: "transparent" }}
-              />
-              <style jsx>{`
-                input[type=range]::-webkit-slider-runnable-track { 
-                  width: 100%; 
-                  height: 4px; 
-                  cursor: pointer; 
-                  background: #1a120c; 
-                  border-radius: 9999px; 
-                  border: 1px solid #3a2f22; 
-                }
-                input[type=range]::-webkit-slider-thumb { 
-                  height: 14px; 
-                  width: 14px; 
-                  border-radius: 9999px; 
-                  background: #c6a97a; 
-                  border: 1.5px solid #3a2f22; 
-                  cursor: pointer; 
-                  -webkit-appearance: none; 
-                  appearance: none; 
-                  margin-top: -6px; 
-                  box-shadow: 0 0 8px rgba(198,169,122,0.6); 
-                }
-                input[type=range]::-moz-range-track { 
-                  width: 100%; 
-                  height: 4px; 
-                  cursor: pointer; 
-                  background: #1a120c; 
-                  border-radius: 9999px; 
-                  border: 1px solid #3a2f22; 
-                }
-                input[type=range]::-moz-range-thumb { 
-                  height: 14px; 
-                  width: 14px; 
-                  border-radius: 9999px; 
-                  background: #c6a97a; 
-                  border: 1.5px solid #3a2f22; 
-                  cursor: pointer; 
-                  box-shadow: 0 0 8px rgba(198,169,122,0.6); 
-                }
-              `}</style>
+  
+                    {/* ── DRAGGABLE CURTAIN SLIDER ── */}
+          <motion.div
+            drag
+            dragMomentum={false}
+            // Optional: constraints keep it from being dragged off-screen
+            dragConstraints={{ left: -100, right: 100, top: -500, bottom: 50 }} 
+            className="absolute bottom-[2vh] left-1/2 -translate-x-1/2 w-[120px] md:w-[150px] flex flex-col items-center z-[2000] pointer-events-auto p-2 rounded-lg backdrop-blur-md cursor-grab active:cursor-grabbing"
+            style={{ 
+              background: "rgba(0,0,0,0.5)", 
+              border: "1px solid rgba(198,169,122,0.2)",
+              boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
+              touchAction: "none" // Prevents page scrolling while dragging on mobile
+            }}
+          >
+            {/* Drag Handle Visual */}
+            <div className="flex gap-1 mb-1 opacity-30">
+              <div className="w-1 h-1 rounded-full bg-[#c6a97a]" />
+              <div className="w-1 h-1 rounded-full bg-[#c6a97a]" />
+              <div className="w-1 h-1 rounded-full bg-[#c6a97a]" />
             </div>
+
+            <span
+              className="text-[6px] md:text-[8px] tracking-[0.2em] uppercase mb-1 md:mb-2 font-sans transition-colors duration-500 select-none pointer-events-none"
+              style={{ color: darkMode ? "#c6a97a" : "#fcd34d" }}
+            >
+              Drape Pulley
+            </span>
+
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={openness}
+              onChange={(e) => setOpenness(Number(e.target.value))}
+              // Important: stopPropagation prevents the drag from triggering when just sliding
+              onPointerDown={(e) => e.stopPropagation()} 
+              className="w-full h-4 cursor-pointer"
+              style={{ WebkitAppearance: "none", appearance: "none", background: "transparent" }}
+            />
+
+            <style jsx>{`
+              input[type=range]::-webkit-slider-runnable-track { 
+                width: 100%; height: 4px; background: #1a120c; border-radius: 9999px; border: 1px solid #3a2f22; 
+              }
+              input[type=range]::-webkit-slider-thumb { 
+                height: 14px; width: 14px; border-radius: 9999px; background: #c6a97a; border: 1.5px solid #3a2f22; 
+                -webkit-appearance: none; margin-top: -6px; box-shadow: 0 0 8px rgba(198,169,122,0.6); 
+              }
+              input[type=range]::-moz-range-track { 
+                width: 100%; height: 4px; background: #1a120c; border-radius: 9999px; border: 1px solid #3a2f22; 
+              }
+              input[type=range]::-moz-range-thumb { 
+                height: 14px; width: 14px; border-radius: 9999px; background: #c6a97a; border: 1.5px solid #3a2f22; 
+                box-shadow: 0 0 8px rgba(198,169,122,0.6); 
+              }
+            `}</style>
+          </motion.div>
             
           {/* ── PAGE CONTENT (Background Layer) ── */}
       <div className="relative z-50 w-full h-full overflow-y-auto pointer-events-none">
