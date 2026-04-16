@@ -94,7 +94,6 @@ export default function RoomLayout({ children }: { children: React.ReactNode }) 
   };
 
   const navLinks = [
-    { name: "Home", path: "/" },
     { name: "About me", path: "/about" },
     { name: "Galleria", path: "/gallery" },
     { name: "Contact", path: "/contact" },
@@ -127,7 +126,7 @@ export default function RoomLayout({ children }: { children: React.ReactNode }) 
     <ThemeContext.Provider value={{ darkMode, openness }}>
       <div
         className={`relative w-full h-screen overflow-hidden font-serif transition-colors duration-1000 ${
-          darkMode ? "bg-[#050302]" : "bg-[#1a120c]"
+          darkMode ? "bg-[#0e0a06]" : "bg-[#2a1a0e]"
         }`}
       >
         {/* ─── BACKGROUND LAYER ─── */}
@@ -389,128 +388,7 @@ export default function RoomLayout({ children }: { children: React.ReactNode }) 
             ))}
           </div>
 
-          {/* ── GOTHIC ARMOR (left wall) ── */}
-          <div className="absolute bottom-[8vh] md:bottom-[10vh] left-[1vw] md:left-[3vw] w-[90px] md:w-[170px] h-[260px] md:h-[400px] z-30 flex flex-col items-center opacity-95 pointer-events-none">
-            {/* Helmet with plume */}
-            <div className="relative w-10 md:w-18 h-9 md:h-13 -mb-2 z-0">
-              <div
-                className="w-10 md:w-16 h-9 md:h-12 rounded-t-full rounded-bl-full"
-                style={{
-                  background: "linear-gradient(135deg, #ef4444 0%, #b91c1c 50%, #7f1d1d 100%)",
-                  boxShadow: "inset -4px -4px 12px rgba(0,0,0,0.6), 0 4px 12px rgba(0,0,0,0.8)",
-                }}
-              >
-                <div
-                  className="absolute inset-0 rounded-t-full rounded-bl-full opacity-20"
-                  style={{
-                    backgroundImage:
-                      "repeating-linear-gradient(45deg, transparent, transparent 3px, rgba(0,0,0,0.4) 3px, rgba(0,0,0,0.4) 5px)",
-                  }}
-                />
-              </div>
-              {/* Plume */}
-              <div className="absolute -top-4 md:-top-6 left-1/2 -translate-x-1/2 flex gap-[2px]">
-                {[6, 9, 7].map((h, k) => (
-                  <motion.div
-                    key={k}
-                    className="w-[3px] rounded-full"
-                    style={{ height: `${h * 3}px`, background: "linear-gradient(to top, #991b1b, #ef4444, #fca5a5)" }}
-                    animate={{ rotate: [-2, 2, -2] }}
-                    transition={{ duration: 1.5 + k * 0.3, repeat: Infinity }}
-                  />
-                ))}
-              </div>
-            </div>
-            {/* Gorget + Cuirass */}
-            <div
-              className="relative w-9 md:w-13 h-14 md:h-22 rounded-t-3xl rounded-b-lg z-10"
-              style={{
-                background: "linear-gradient(180deg, #718096 0%, #4a5568 50%, #1a202c 100%)",
-                border: "2px solid #4a5568",
-                boxShadow: "0 8px 20px rgba(0,0,0,0.8), inset 0 2px 4px rgba(255,255,255,0.1)",
-              }}
-            >
-              {/* Visor slot */}
-              <div
-                className="absolute top-3 md:top-4 left-1/2 -translate-x-1/2 w-5 md:w-8 h-5 md:h-7 bg-[#0d1117] rounded-sm"
-                style={{ boxShadow: "inset 0 0 12px rgba(0,0,0,0.95)" }}
-              />
-              {/* Cheek guards */}
-              <div
-                className="absolute top-9 md:top-13 -left-2 md:-left-3 w-3 md:w-5 h-5 md:h-8 rounded-l-lg"
-                style={{ background: "linear-gradient(90deg, #4a5568, #2d3748)", border: "1.5px solid #718096" }}
-              />
-              <div
-                className="absolute top-9 md:top-13 -right-2 md:-right-3 w-3 md:w-5 h-5 md:h-8 rounded-r-lg"
-                style={{ background: "linear-gradient(270deg, #4a5568, #2d3748)", border: "1.5px solid #718096" }}
-              />
-              {/* Gold filigree */}
-              <div className="absolute top-1.5 w-full h-[1px]" style={{ background: "linear-gradient(90deg, transparent, rgba(198,169,122,0.5), transparent)" }} />
-            </div>
-            {/* Pauldrons + chest */}
-            <div className="relative w-14 md:w-22 h-18 md:h-26 mt-0.5 z-20 flex justify-center">
-              {[-1, 1].map((side, idx) => (
-                <div
-                  key={idx}
-                  className={`absolute top-0 w-5 md:w-9 h-9 md:h-13 rounded-full ${idx === 0 ? "-left-2 md:-left-3" : "-right-2 md:-right-3"}`}
-                  style={{
-                    background: `linear-gradient(${idx === 0 ? "135" : "225"}deg, #718096, #2d3748)`,
-                    border: "2px solid #4a5568",
-                    boxShadow: "0 6px 14px rgba(0,0,0,0.8)",
-                  }}
-                >
-                  <div
-                    className="absolute inset-1 rounded-full opacity-30"
-                    style={{ border: "1px solid rgba(198,169,122,0.4)" }}
-                  />
-                </div>
-              ))}
-              <div
-                className="w-9 md:w-14 h-full rounded-b-2xl"
-                style={{
-                  background: "linear-gradient(180deg, #718096 0%, #4a5568 60%, #1a202c 100%)",
-                  border: "2px solid #4a5568",
-                  boxShadow: "inset 0 0 18px rgba(0,0,0,0.5)",
-                  position: "relative",
-                }}
-              >
-                <div className="absolute left-1/2 -translate-x-1/2 w-[1.5px] h-full bg-[#2d3748]" />
-                <div className="absolute top-2 left-1/2 -translate-x-1/2 w-5 md:w-7 h-5 md:h-7" style={{ border: "1px solid rgba(198,169,122,0.35)", borderRadius: "50%" }} />
-                <div className="absolute top-6 md:top-9 left-1/2 -translate-x-1/2 w-4 md:w-5 h-4 md:h-5 rotate-45" style={{ border: "1px solid rgba(198,169,122,0.25)" }} />
-              </div>
-            </div>
-            {/* Faulds */}
-            <div className="w-12 md:w-18 h-8 md:h-12 mt-[-2px] flex flex-col gap-[2px] z-10">
-              {[...Array(4)].map((_, i) => (
-                <div
-                  key={i}
-                  className="flex-1 w-full rounded-b-md"
-                  style={{
-                    background: "linear-gradient(180deg, #4a5568, #1a202c)",
-                    border: "1.5px solid #4a5568",
-                    borderTop: "none",
-                  }}
-                />
-              ))}
-            </div>
-            {/* Greaves */}
-            <div className="w-9 md:w-12 h-18 md:h-26 mt-1 flex justify-between z-0">
-              {[0, 1].map((i) => (
-                <div
-                  key={i}
-                  className="w-3 md:w-5 h-full rounded-b-md"
-                  style={{
-                    background: "linear-gradient(180deg, #4a5568, #2d3748, #0d1117)",
-                    border: "1.5px solid #4a5568",
-                  }}
-                >
-                  {[3, 7, 11].map((top) => (
-                    <div key={top} className="absolute w-full h-[1px]" style={{ top: `${top * 4}px`, background: "rgba(198,169,122,0.12)" }} />
-                  ))}
-                </div>
-              ))}
-            </div>
-          </div>
+    
 
           {/* ── CHANDELIER (enhanced) ── */}
           <div
@@ -604,7 +482,7 @@ export default function RoomLayout({ children }: { children: React.ReactNode }) 
                           className="w-3 md:w-4 h-4 md:h-5 rounded-t-full rounded-bl-full"
                           style={{
                             background: "radial-gradient(ellipse at 40% 80%, #fbbf24, #f97316, #ef4444)",
-                            boxShadow: isMobile ? "0 0 6px 2px rgba(251,191,36,0.4)" : "0 0 12px 4px rgba(251,191,36,0.6), 0 0 25px 8px rgba(249,115,22,0.35)",
+                            boxShadow: isMobile ? "0 0 8px 4px rgba(251,191,36,0.6)" : "0 0 20px 8px rgba(251,191,36,0.85), 0 0 50px 18px rgba(249,115,22,0.45)",
                             transformOrigin: "center bottom",
                           }}
                         />
@@ -652,148 +530,6 @@ export default function RoomLayout({ children }: { children: React.ReactNode }) 
             </div>
           </div>
 
-          {/* ── FIREPLACE (enhanced) ── */}
-          <div
-            className={`absolute bottom-0 w-full z-40 transition-all duration-700 pointer-events-none ${
-              isSubPage ? "opacity-15 blur-md translate-y-8" : "opacity-100 translate-y-0"
-            }`}
-          >
-            {/* Floor */}
-            <div
-              className="absolute bottom-0 w-full h-[16vh] md:h-[20vh]"
-              style={{
-                background: "linear-gradient(to top, #020100, #080604, #120e09)",
-                borderTop: `6px solid ${darkMode ? "#080604" : "#0a0705"}`,
-              }}
-            />
-            {/* Hearth surround */}
-            <div
-              className="absolute bottom-[10vh] md:bottom-[13vh] left-1/2 -translate-x-1/2 w-[220px] md:w-[500px] h-[130px] md:h-[200px]"
-              style={{
-                background: "linear-gradient(180deg, #2a1f14 0%, #1a120c 50%, #0a0805 100%)",
-                border: `8px solid ${darkMode ? "#1a120c" : "#2a1f14"}`,
-                borderBottom: "none",
-                boxShadow: "inset 0 -20px 50px rgba(0,0,0,0.99), 0 0 80px rgba(0,0,0,0.9)",
-              }}
-            >
-              {/* Back wall of firebox */}
-              <div
-                className="absolute inset-0"
-                style={{
-                  background: darkMode
-                    ? "radial-gradient(ellipse at 50% 80%, #5c1818 0%, #3a0f0f 40%, #1a0303 100%)"
-                    : "radial-gradient(ellipse at 50% 80%, #3a0f0f 0%, #1a0303 70%)",
-                }}
-              />
-              {/* Brick pattern */}
-              <div
-                className="absolute inset-0 opacity-40"
-                style={{
-                  backgroundImage:
-                    "repeating-linear-gradient(0deg, transparent, transparent 14px, rgba(0,0,0,0.4) 14px, rgba(0,0,0,0.4) 16px), repeating-linear-gradient(90deg, transparent, transparent 28px, rgba(0,0,0,0.2) 28px, rgba(0,0,0,0.2) 30px)",
-                }}
-              />
-
-              {/* Log pile */}
-              <div className="absolute bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 w-28 md:w-48">
-                {[
-                  { w: "w-28 md:w-44", rot: "-rotate-6", bottom: "bottom-0", z: "z-0" },
-                  { w: "w-24 md:w-36", rot: "rotate-4", bottom: "bottom-2 md:bottom-3", z: "z-0" },
-                  { w: "w-16 md:w-24", rot: "-rotate-2", bottom: "bottom-4 md:bottom-6", z: "z-0" },
-                ].map((log, i) => (
-                  <div
-                    key={i}
-                    className={`absolute left-1/2 -translate-x-1/2 ${log.w} h-3 md:h-5 ${log.rot} ${log.bottom} ${log.z} rounded-full`}
-                    style={{
-                      background: "linear-gradient(180deg, #2d1810, #1a0d08, #0d0604)",
-                      border: "1px solid rgba(0,0,0,0.5)",
-                      boxShadow: "inset 0 -2px 6px rgba(0,0,0,0.8)",
-                    }}
-                  >
-                    <div className="absolute top-0 left-0 right-0 h-[3px] rounded-t-full" style={{ background: darkMode ? "rgba(180,80,20,0.4)" : "transparent" }} />
-                  </div>
-                ))}
-              </div>
-
-              {/* Fire - simplified on mobile */}
-              {darkMode && (
-                <div className="absolute bottom-7 md:bottom-10 left-1/2 -translate-x-1/2 w-24 md:w-40 h-20 md:h-32 mix-blend-screen">
-                  {/* Base coals glow */}
-                  <motion.div
-                    className="absolute bottom-0 left-1/2 -translate-x-1/2 w-24 md:w-36 h-4 md:h-6 rounded-full"
-                    style={{ background: "radial-gradient(ellipse, #dc2626, #991b1b, transparent)", filter: "blur(6px)" }}
-                    animate={{ scaleX: [1, 1.1, 0.95, 1], opacity: [0.8, 1, 0.85, 1] }}
-                    transition={{ duration: 0.7, repeat: Infinity }}
-                  />
-                  {/* Main flame mass */}
-                  <motion.div
-                    className="absolute bottom-2 md:bottom-3 left-1/2 -translate-x-1/2 w-20 md:w-32 h-16 md:h-26"
-                    style={{ background: "radial-gradient(ellipse at 50% 90%, #dc2626, #f97316, rgba(251,146,60,0))", filter: "blur(12px)", borderRadius: "50%" }}
-                    animate={{ scaleY: [1, 1.2, 0.9, 1.15, 1], scaleX: [1, 0.95, 1.05, 0.98, 1] }}
-                    transition={{ duration: 0.55, repeat: Infinity }}
-                  />
-                  {/* Mid flame */}
-                  <motion.div
-                    className="absolute bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 w-14 md:w-22 h-12 md:h-20"
-                    style={{ background: "radial-gradient(ellipse at 50% 85%, #f97316, #fbbf24, rgba(253,224,71,0))", filter: "blur(8px)", borderRadius: "50%" }}
-                    animate={{ scaleY: [1, 1.25, 0.88, 1.18, 1], scaleX: [1, 0.9, 1.1, 0.95, 1] }}
-                    transition={{ duration: 0.5, repeat: Infinity, delay: 0.1 }}
-                  />
-                  {/* Hot core - simplified on mobile */}
-                  {!isMobile && (
-                    <motion.div
-                      className="absolute bottom-5 md:bottom-8 left-1/2 -translate-x-1/2 w-6 md:w-10 h-8 md:h-14"
-                      style={{ background: "radial-gradient(ellipse at 50% 80%, #fef3c7, #fbbf24, rgba(253,224,71,0))", filter: "blur(4px)", borderRadius: "50%" }}
-                      animate={{ scaleY: [1, 1.3, 0.9, 1.2, 1] }}
-                      transition={{ duration: 0.4, repeat: Infinity, delay: 0.2 }}
-                    />
-                  )}
-                  {/* Embers - reduced on mobile */}
-                  {emberParticles.slice(0, isMobile ? 4 : 12).map((p) => (
-                    <motion.div
-                      key={p.id}
-                      className="absolute bottom-0 w-[3px] h-[3px] rounded-full"
-                      style={{ left: `calc(50% + ${p.x}px)`, background: "#fbbf24" }}
-                      animate={{ y: [0, -40, -80], opacity: [1, 0.8, 0], x: [0, p.x / 4, p.x / 2] }}
-                      transition={{ duration: p.dur, repeat: Infinity, delay: p.delay, ease: "easeOut" }}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-
-
-            {/* Mantle legs */}
-            {[-1, 1].map((side) => (
-              <div
-                key={side}
-                className="absolute"
-                style={{
-                  bottom: "calc(10vh + 24px)",
-                  left: side === -1 ? "calc(50% - 120px) md:calc(50% - 270px)" : "auto",
-                  right: side === 1 ? "calc(50% - 120px) md:calc(50% - 270px)" : "auto",
-                  width: "16px",
-                  height: "100px",
-                  background: "linear-gradient(180deg, #3a2f22, #2a2016, #1a1208)",
-                  borderLeft: side === -1 ? "1px solid rgba(198,169,122,0.25)" : "none",
-                  borderRight: side === 1 ? "1px solid rgba(198,169,122,0.25)" : "none",
-                }}
-              />
-            ))}
-
-            {/* Floor glow */}
-            {darkMode && (
-              <motion.div
-                className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[300px] md:w-[600px] h-[80px] md:h-[120px] pointer-events-none"
-                style={{
-                  background: "radial-gradient(ellipse at 50% 100%, rgba(220,38,38,0.25), rgba(249,115,22,0.1), transparent)",
-                  filter: "blur(20px)",
-                }}
-                animate={{ opacity: [0.6, 1, 0.7, 0.9, 0.6] }}
-                transition={{ duration: 1.2, repeat: Infinity }}
-              />
-            )}
-          </div>
 
           {/* ── WALL SCONCES (original - right one will be duplicated forward below) ── */}
           <div className={`absolute inset-0 pointer-events-none z-50 transition-all duration-700 ${isSubPage ? "opacity-15 blur-sm" : "opacity-100"}`}>
@@ -803,7 +539,7 @@ export default function RoomLayout({ children }: { children: React.ReactNode }) 
               <div
                 key={i}
                 className={`absolute top-[22vh] md:top-[28vh] ${sconce.posClass} flex flex-col items-center drop-shadow-[0_12px_22px_rgba(0,0,0,0.99)]`}
-                style={{ transform: "scale(0.55) md:scale(0.85)", transformOrigin: "top center" }}
+                style={{ transform: "scale(0.6)", transformOrigin: "top center" }}
               >
                 {/* Wall plate */}
                 <div
@@ -852,7 +588,7 @@ export default function RoomLayout({ children }: { children: React.ReactNode }) 
                           className="w-2 md:w-3 h-3 md:h-4 rounded-t-full"
                           style={{
                             background: "radial-gradient(ellipse at 40% 70%, #fbbf24, #f97316)",
-                            boxShadow: isMobile ? "0 0 8px 4px rgba(251,191,36,0.5)" : "0 0 20px 8px rgba(251,191,36,0.7), 0 0 40px 12px rgba(249,115,22,0.35)",
+                            boxShadow: isMobile ? "0 0 10px 5px rgba(251,191,36,0.6)" : "0 0 24px 10px rgba(251,191,36,0.85), 0 0 50px 18px rgba(249,115,22,0.45)",
                           }}
                         />
                       </motion.div>
@@ -863,108 +599,333 @@ export default function RoomLayout({ children }: { children: React.ReactNode }) 
             ))}
           </div>
         </div>
-        {/* ─── END BACKGROUND LAYER ─── */}
-
-       {/* ── SMALL SIDE TABLE & BOOK NAV (Bottom Right) ── */}
-<div className="absolute bottom-[2vh] md:bottom-[10vh] right-[3vw] w-[200px] md:w-[280px] h-[180px] md:h-[240px] z-[200] flex flex-col items-center">
-  
-  {/* The Table Top Surface (Depth perspective) */}
-  <div 
-    className="absolute w-[95%] h-[30px] rounded-t-xl z-10" 
-    style={{ 
-        bottom: "calc(2vh + 35px)",
-        background: "#2a1f14", 
-        transform: "rotateX(70deg)", 
-        boxShadow: "0 10px 20px rgba(0,0,0,0.5)" 
-    }} 
-  />
-  
-  {/* Table Front Leg & Structure */}
-  <div 
-    className="absolute bottom-[2vh] md:bottom-[10vh] w-[90%] h-[120px] md:h-[160px] bg-[#1a120c] z-0" 
-    style={{ 
-        clipPath: "polygon(5% 0, 95% 0, 85% 100%, 15% 100%)", 
-        border: "1.5px solid #2a1f14" 
-    }} 
-  />
-
-  {/* ── THE BOOK (With Vivid Sparkle Discovery) ── */}
-<div 
-  className="absolute left-1/2 -translate-x-1/2 z-[300] cursor-pointer"
-  style={{ bottom: "calc(2vh + 60px)" }}
-  onClick={() => setBookOpen(true)}
+          {/* ── WOODEN FLOOR (3D Perspective - Full Coverage) ── */}
+<div
+  className="absolute bottom-0 left-0 right-0 z-[5] pointer-events-none overflow-hidden"
+  style={{ 
+    height: "40vh", // Total area reserved for the floor
+    perspective: "1000px", 
+    perspectiveOrigin: "50% 0%",
+  }}
 >
-  {/* 1. VIVID MULTI-LAYER GLOW */}
-  <div className="absolute inset-0 -z-10 flex items-center justify-center pointer-events-none">
-    {/* Inner Core Glow */}
-    <motion.div
-      animate={{ opacity: [0.4, 0.8, 0.4], scale: [1, 1.2, 1] }}
-      transition={{ duration: 2, repeat: Infinity }}
-      className="absolute w-20 h-20 bg-[#ffcc00] blur-xl rounded-full mix-blend-screen"
-    />
-    {/* Large Soft Aura */}
-    <motion.div
-      animate={{ opacity: [0.1, 0.3, 0.1], scale: [0.8, 1.5, 0.8] }}
-      transition={{ duration: 4, repeat: Infinity }}
-      className="absolute w-64 h-64 bg-[#c6a97a] blur-[60px] rounded-full opacity-20"
-    />
-    
-    {/* 2. SPARKLE PARTICLES */}
-    {sparkleParticles.map((p) => (
-      <motion.div
-        key={p.id}
-        animate={{ 
-          y: [0, -40], 
-          x: [0, (p.id % 2 === 0 ? 20 : -20)],
-          opacity: [0, 1, 0],
-          scale: [0, 1.5, 0] 
-        }}
-        transition={{ 
-          duration: p.duration, 
-          repeat: Infinity, 
-          delay: p.id * 0.5 
-        }}
-        className="absolute w-1 h-1 bg-white rounded-full shadow-[0_0_8px_#fff]"
-        style={{ left: `${p.x}%` }}
-      />
-    ))}
+  <div 
+    className="absolute bottom-0 left-1/2 -translate-x-1/2" 
+    style={{
+      // Width is much larger than 100% to cover gaps created by perspective narrowing
+      width: "150%", 
+      height: "120%", // Extra height to ensure it tucks under the wall shadow
+      background: "linear-gradient(180deg, #3d2208 0%, #2e1a06 60%, #1e1004 100%)",
+      transform: "rotateX(60deg)", 
+      transformOrigin: "bottom center",
+    }}
+  >
+    {/* Wood plank grain lines */}
+    <div className="absolute inset-0" style={{
+      backgroundImage: `
+        repeating-linear-gradient(
+          180deg,
+          transparent 0px,
+          transparent 38px,
+          rgba(0,0,0,0.3) 38px,
+          rgba(0,0,0,0.3) 40px
+        ),
+        repeating-linear-gradient(
+          90deg,
+          rgba(255,180,80,0.02) 0px,
+          transparent 2px,
+          transparent 120px,
+          rgba(0,0,0,0.1) 120px,
+          rgba(0,0,0,0.1) 122px
+        )
+      `,
+    }} />
+
+    {/* Light reflection/Ambient occlusion */}
+    <div className="absolute inset-0" style={{
+      background: "radial-gradient(ellipse 50% 80% at 50% 0%, rgba(255,180,100,0.08) 0%, transparent 80%)",
+    }} />
   </div>
 
-  <motion.div
-    className="relative w-36 md:w-40 h-9 md:h-10 bg-[#3d1a10] rounded-sm shadow-[0_10px_25px_rgba(0,0,0,1)] border-2 border-[#5c2d1d] flex items-center justify-center group"
-    whileHover={{ y: -5, rotateX: 10, borderColor: "#f8f8f8" }}
-  >
-    {/* Floating "Instruction" — Now with a vivid pulse */}
-    <motion.div 
-      className="absolute -top-14 left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none"
-      animate={{ y: [0, -10, 0] }}
-      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-    >
-      <span className="text-white text-[9px] tracking-[0.3em] font-bold uppercase mb-1 drop-shadow-[0_0_5px_#ffcc00] font-serif">
-        Click To Open Book
-      </span>
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fdfdfd" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="drop-shadow-[0_0_8px_#ffcc00]">
-        <circle cx="12" cy="12" r="10" strokeDasharray="3 3" />
-        <path d="M12 8v8M8 12l4 4 4-4" />
-      </svg>
-    </motion.div>
+  {/* Junction shadow (The 'Kickplate' area where floor meets wall) */}
+  <div className="absolute top-[8vh] left-0 right-0 h-[6px] z-10" style={{
+    background: "rgba(0,0,0,0.85)",
+    boxShadow: "0 15px 35px 15px rgba(0,0,0,0.95)",
+  }} />
+</div>
 
-    {/* Tassel Bookmark */}
-    <motion.div 
-      className="absolute -left-2 top-2 w-1.5 h-16 bg-[#8b0000] rounded-b-full origin-top shadow-lg"
-      animate={{ rotate: [-4, 4, -4] }}
-      transition={{ duration: 3, repeat: Infinity }}
-    />
-    
-    {/* Spine Text - Glows on hover */}
-    <span className="text-[#c6a97a] text-[9px] md:text-[10px] tracking-[0.4em] font-serif font-bold group-hover:text-white group-hover:drop-shadow-[0_0_12px_#ffcc00] transition-all duration-300">
-      AMR&apos;S BOOK
-    </span>
-    
-    <div className="absolute inset-y-0 right-1 w-[1px] bg-[#c6a97a]/40" />
-  </motion.div>
-</div>
-</div>
+          {/* ── AMBIENT ROOM LIGHT (brighter) ── */}
+          <div className="absolute inset-0 z-[4] pointer-events-none" style={{
+            background: darkMode
+              ? "radial-gradient(ellipse 70% 50% at 50% 30%, rgba(200,140,50,0.13) 0%, transparent 65%)"
+              : "radial-gradient(ellipse 80% 60% at 50% 20%, rgba(255,200,100,0.22) 0%, transparent 70%)",
+            transition: "background 1s",
+          }} />
+
+        {/* ─── END BACKGROUND LAYER ─── */}
+
+      {/* ── LARGE WALNUT WRITING TABLE (Center, elevated viewer angle) ── */}
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 z-[200]"
+        style={{ width: "clamp(320px, 62vw, 680px)" }}>
+
+        {/* ── TABLE SURFACE (top-down perspective illusion) ── */}
+        <div className="relative" style={{ height: "clamp(90px, 14vh, 150px)" }}>
+
+          {/* Table top surface — warm walnut, slight perspective skew */}
+          <div className="absolute inset-x-0 bottom-0" style={{
+            height: "100%",
+            background: `
+              repeating-linear-gradient(88deg, transparent 0px, transparent 22px, rgba(0,0,0,0.06) 22px, rgba(0,0,0,0.06) 23px),
+              linear-gradient(175deg, #7a4820 0%, #5c3214 35%, #3e2009 70%, #2a1508 100%)
+            `,
+            borderRadius: "6px 6px 0 0",
+            boxShadow: "0 -6px 30px rgba(0,0,0,0.5), inset 0 2px 0 rgba(255,200,100,0.12), inset 0 -1px 0 rgba(0,0,0,0.4)",
+            transform: "perspective(400px) rotateX(8deg)",
+            transformOrigin: "bottom center",
+          }}>
+            {/* Subtle sheen stripe */}
+            <div className="absolute inset-0 rounded-t pointer-events-none" style={{
+              background: "linear-gradient(160deg, rgba(255,210,130,0.06) 0%, transparent 40%)",
+            }} />
+
+            {/* ── PAPER WEIGHT — brass dome, top-left area ── */}
+            <div className="absolute" style={{ top: "14%", left: "8%" }}>
+              <div style={{
+                width: "clamp(22px,3.5vw,38px)", height: "clamp(14px,2.2vw,24px)",
+                background: "radial-gradient(ellipse 60% 50% at 40% 35%, #e8c96a, #b8952a, #7a5f10)",
+                borderRadius: "50%",
+                boxShadow: "0 3px 10px rgba(0,0,0,0.55), inset 0 1px 3px rgba(255,240,160,0.4)",
+              }} />
+              {/* Shadow under it */}
+              <div style={{
+                width: "clamp(24px,3.8vw,42px)", height: "5px", marginTop: "1px",
+                background: "radial-gradient(ellipse, rgba(0,0,0,0.45) 0%, transparent 70%)",
+                filter: "blur(2px)",
+              }} />
+            </div>
+
+            {/* ── ROLLED ARCHITECTURAL DRAWING — far left ── */}
+            <div className="absolute" style={{ top: "10%", left: "2%", transform: "rotate(-6deg)" }}>
+              <div style={{
+                width: "clamp(32px,5vw,58px)", height: "clamp(10px,1.6vw,18px)",
+                background: "linear-gradient(180deg, #f0e8d0 0%, #d4c8a8 50%, #b8ab88 100%)",
+                borderRadius: "9px",
+                boxShadow: "2px 3px 8px rgba(0,0,0,0.5), inset 0 1px rgba(255,255,255,0.3)",
+                border: "0.5px solid rgba(180,150,80,0.4)",
+              }} />
+              {/* End caps */}
+              <div style={{
+                position:"absolute", left:"-3px", top:0, bottom:0, width:"6px",
+                background:"linear-gradient(90deg,#c6a97a,#8b6b30)",
+                borderRadius:"50%",
+              }} />
+              <div style={{
+                position:"absolute", right:"-3px", top:0, bottom:0, width:"6px",
+                background:"linear-gradient(90deg,#8b6b30,#c6a97a)",
+                borderRadius:"50%",
+              }} />
+            </div>
+
+            {/* ── FLAT PAPERS / SKETCHES — center left ── */}
+            {/* Back sheet */}
+            <div className="absolute" style={{ top: "8%", left: "18%", transform: "rotate(3deg)" }}>
+              <div style={{
+                width: "clamp(44px,7vw,80px)", height: "clamp(32px,5vw,58px)",
+                background: "linear-gradient(160deg, #f5f0e4 0%, #e8e0cc 100%)",
+                borderRadius: "1px",
+                boxShadow: "2px 4px 12px rgba(0,0,0,0.5)",
+                border: "0.5px solid rgba(180,160,100,0.3)",
+              }}>
+                {/* Sketch lines */}
+                {[20,35,50,65].map(y=>(
+                  <div key={y} style={{ position:"absolute", top:`${y}%`, left:"10%", right:"10%", height:"1px", background:"rgba(80,50,20,0.2)" }} />
+                ))}
+                <div style={{ position:"absolute", top:"15%", left:"12%", width:"36%", height:"30%", border:"0.5px solid rgba(80,50,20,0.25)", borderRadius:"1px" }} />
+              </div>
+            </div>
+            {/* Front sheet — slightly overlapping */}
+            <div className="absolute" style={{ top: "18%", left: "22%", transform: "rotate(-2deg)" }}>
+              <div style={{
+                width: "clamp(38px,6vw,68px)", height: "clamp(28px,4.5vw,52px)",
+                background: "linear-gradient(160deg, #faf6ec 0%, #ede5cf 100%)",
+                borderRadius: "1px",
+                boxShadow: "1px 3px 8px rgba(0,0,0,0.45)",
+                border: "0.5px solid rgba(180,160,100,0.25)",
+              }}>
+                {[25,45,65].map(y=>(
+                  <div key={y} style={{ position:"absolute", top:`${y}%`, left:"10%", right:"10%", height:"1px", background:"rgba(60,30,10,0.18)" }} />
+                ))}
+              </div>
+            </div>
+
+            {/* ── PENCIL — diagonal, resting on papers ── */}
+            <div className="absolute" style={{ top: "28%", left: "14%", transform: "rotate(-18deg)", transformOrigin:"left center" }}>
+              <div style={{ display:"flex", alignItems:"center" }}>
+                {/* Eraser */}
+                <div style={{ width:"clamp(5px,0.8vw,9px)", height:"clamp(5px,0.8vw,9px)", background:"#d4847a", borderRadius:"1px", border:"0.5px solid #a05850" }} />
+                {/* Ferrule */}
+                <div style={{ width:"clamp(4px,0.6vw,7px)", height:"clamp(5px,0.8vw,9px)", background:"linear-gradient(90deg,#a8a090,#c8c0a8)", border:"0.5px solid #888" }} />
+                {/* Body */}
+                <div style={{ width:"clamp(38px,5.5vw,64px)", height:"clamp(5px,0.8vw,9px)", background:"linear-gradient(180deg,#e8c840,#c8a820,#a88010)", borderRadius:"0 1px 1px 0" }} />
+                {/* Tip */}
+                <div style={{ width:0, height:0, borderTop:`clamp(2px,0.4vw,5px) solid transparent`, borderBottom:`clamp(2px,0.4vw,5px) solid transparent`, borderLeft:`clamp(6px,1vw,12px) solid #d4956a` }} />
+                <div style={{ width:0, height:0, borderTop:`clamp(1px,0.25vw,3px) solid transparent`, borderBottom:`clamp(1px,0.25vw,3px) solid transparent`, borderLeft:`clamp(4px,0.6vw,8px) solid #2a1508` }} />
+              </div>
+            </div>
+
+            {/* ── SMALL OPEN NOTEBOOK — right of center ── */}
+            <div className="absolute" style={{ top: "6%", right: "22%", transform: "rotate(2deg)" }}>
+              {/* Left page */}
+              <div style={{
+                position:"absolute", right:"clamp(20px,3.2vw,38px)", top:0,
+                width:"clamp(28px,4.5vw,52px)", height:"clamp(36px,5.8vw,66px)",
+                background:"linear-gradient(170deg,#f0ead8,#e0d8c0)",
+                borderRadius:"1px 0 0 1px",
+                boxShadow:"-2px 3px 10px rgba(0,0,0,0.4)",
+                border:"0.5px solid rgba(160,130,80,0.3)",
+                borderRight:"none",
+              }}>
+                {[18,32,46,60,74].map(y=>(
+                  <div key={y} style={{ position:"absolute", top:`${y}%`, left:"12%", right:"8%", height:"1px", background:"rgba(100,160,200,0.3)" }} />
+                ))}
+              </div>
+              {/* Spine */}
+              <div style={{
+                position:"absolute", right:"clamp(17px,2.8vw,35px)", top:0, width:"clamp(5px,0.8vw,9px)", height:"clamp(36px,5.8vw,66px)",
+                background:"linear-gradient(90deg,#1a0e04,#3a2010,#1a0e04)",
+                boxShadow:"0 2px 6px rgba(0,0,0,0.6)",
+              }} />
+              {/* Right page */}
+              <div style={{
+                position:"absolute", right:0, top:0,
+                width:"clamp(28px,4.5vw,52px)", height:"clamp(36px,5.8vw,66px)",
+                background:"linear-gradient(170deg,#faf5e8,#ede5d0)",
+                borderRadius:"0 1px 1px 0",
+                boxShadow:"2px 3px 10px rgba(0,0,0,0.4)",
+                border:"0.5px solid rgba(160,130,80,0.3)",
+                borderLeft:"none",
+              }}>
+                {[18,32,46,60,74].map(y=>(
+                  <div key={y} style={{ position:"absolute", top:`${y}%`, left:"8%", right:"12%", height:"1px", background:"rgba(100,160,200,0.3)" }} />
+                ))}
+                {/* Small pencil mark */}
+                <div style={{ position:"absolute", top:"22%", left:"14%", width:"40%", height:"8%", background:"rgba(60,30,10,0.12)", borderRadius:"1px" }} />
+              </div>
+            </div>
+
+            {/* ── BRASS RULER — right side, diagonal ── */}
+            <div className="absolute" style={{ top: "55%", right: "8%", transform: "rotate(8deg)", transformOrigin:"right center" }}>
+              <div style={{
+                width:"clamp(50px,8vw,90px)", height:"clamp(6px,1vw,12px)",
+                background:"linear-gradient(180deg, #d4a830 0%, #b88820 40%, #8a6010 100%)",
+                borderRadius:"1px",
+                boxShadow:"1px 2px 6px rgba(0,0,0,0.5), inset 0 1px rgba(255,240,160,0.3)",
+                border:"0.5px solid rgba(180,130,40,0.5)",
+              }}>
+                {/* Tick marks */}
+                {[10,20,30,40,50,60,70,80,90].map(x=>(
+                  <div key={x} style={{ position:"absolute", left:`${x}%`, top:0, width:"1px", height: x%30===0?"60%":"35%", background:"rgba(60,30,0,0.5)" }} />
+                ))}
+              </div>
+            </div>
+
+            {/* ── SMALL GLASS INK BOTTLE — far right ── */}
+            <div className="absolute" style={{ top: "8%", right: "5%" }}>
+              {/* Cap */}
+              <div style={{ width:"clamp(10px,1.6vw,18px)", height:"clamp(5px,0.8vw,9px)", background:"linear-gradient(180deg,#1a1208,#0a0804)", borderRadius:"2px 2px 0 0", margin:"0 auto", border:"0.5px solid rgba(198,169,122,0.3)" }} />
+              {/* Body */}
+              <div style={{
+                width:"clamp(14px,2.2vw,24px)", height:"clamp(18px,3vw,32px)",
+                background: darkMode
+                  ? "linear-gradient(160deg,rgba(20,10,40,0.9),rgba(10,5,20,0.95))"
+                  : "linear-gradient(160deg,rgba(30,15,50,0.7),rgba(15,8,30,0.8))",
+                borderRadius:"2px 2px 3px 3px",
+                border:"0.5px solid rgba(140,100,180,0.35)",
+                boxShadow:"1px 3px 8px rgba(0,0,0,0.6), inset 1px 1px rgba(180,140,220,0.15)",
+              }}>
+                {/* Ink level */}
+                <div style={{ position:"absolute", bottom:"15%", left:"15%", right:"15%", top:"45%", background:"rgba(60,20,90,0.6)", borderRadius:"1px" }} />
+                {/* Glass highlight */}
+                <div style={{ position:"absolute", top:"8%", left:"15%", width:"25%", height:"35%", background:"rgba(255,255,255,0.1)", borderRadius:"1px" }} />
+              </div>
+              {/* Shadow */}
+              <div style={{ width:"clamp(16px,2.6vw,28px)", height:"4px", background:"radial-gradient(ellipse,rgba(0,0,0,0.5) 0%,transparent 70%)", filter:"blur(2px)" }} />
+            </div>
+
+            {/* ── THE BOOK (center, with sparkle) ── */}
+            <div
+              className="absolute left-1/2 -translate-x-1/2 z-[300] cursor-pointer"
+              style={{ top: "0%", transform: "translateX(-50%) translateY(-10%)" }}
+              onClick={() => setBookOpen(true)}
+            >
+              {/* Glow */}
+              <div className="absolute inset-0 -z-10 flex items-center justify-center pointer-events-none">
+                <motion.div animate={{ opacity:[0.4,0.8,0.4], scale:[1,1.2,1] }} transition={{ duration:2, repeat:Infinity }}
+                  className="absolute w-20 h-20 bg-[#ffcc00] blur-xl rounded-full mix-blend-screen" />
+                <motion.div animate={{ opacity:[0.1,0.3,0.1], scale:[0.8,1.5,0.8] }} transition={{ duration:4, repeat:Infinity }}
+                  className="absolute w-64 h-64 bg-[#c6a97a] blur-[60px] rounded-full opacity-20" />
+                {sparkleParticles.map((p) => (
+                  <motion.div key={p.id}
+                    animate={{ y:[0,-40], x:[0,(p.id%2===0?20:-20)], opacity:[0,1,0], scale:[0,1.5,0] }}
+                    transition={{ duration:p.duration, repeat:Infinity, delay:p.id*0.5 }}
+                    className="absolute w-1 h-1 bg-white rounded-full shadow-[0_0_8px_#fff]"
+                    style={{ left:`${p.x}%` }} />
+                ))}
+              </div>
+
+              <motion.div
+                className="relative bg-[#3d1a10] rounded-sm shadow-[0_10px_25px_rgba(0,0,0,1)] border-2 border-[#5c2d1d] flex items-center justify-center group"
+                style={{ width:"clamp(110px,16vw,180px)", height:"clamp(30px,4.5vh,42px)" }}
+                whileHover={{ y:-5, rotateX:10, borderColor:"#f8f8f8" }}
+              >
+                <motion.div className="absolute -top-14 left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none"
+                  animate={{ y:[0,-10,0] }} transition={{ duration:2, repeat:Infinity, ease:"easeInOut" }}>
+                  <span className="text-white text-[9px] tracking-[0.3em] font-bold uppercase mb-1 drop-shadow-[0_0_5px_#ffcc00] font-serif whitespace-nowrap">
+                    Click To Open Book
+                  </span>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fdfdfd" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="drop-shadow-[0_0_8px_#ffcc00]">
+                    <circle cx="12" cy="12" r="10" strokeDasharray="3 3" />
+                    <path d="M12 8v8M8 12l4 4 4-4" />
+                  </svg>
+                </motion.div>
+                <motion.div className="absolute -left-2 top-2 w-1.5 h-16 bg-[#8b0000] rounded-b-full origin-top shadow-lg"
+                  animate={{ rotate:[-4,4,-4] }} transition={{ duration:3, repeat:Infinity }} />
+                <span className="text-[#c6a97a] text-[9px] md:text-[10px] tracking-[0.4em] font-serif font-bold group-hover:text-white group-hover:drop-shadow-[0_0_12px_#ffcc00] transition-all duration-300 whitespace-nowrap">
+                  AMR&apos;S BOOK
+                </span>
+                <div className="absolute inset-y-0 right-1 w-[1px] bg-[#c6a97a]/40" />
+              </motion.div>
+            </div>
+
+          </div>{/* end table surface */}
+
+          {/* Table front edge / apron */}
+          <div className="absolute bottom-0 inset-x-0 h-[10px]" style={{
+            background: "linear-gradient(180deg, #2a1508 0%, #160c04 100%)",
+            boxShadow: "0 6px 24px rgba(0,0,0,0.8)",
+          }} />
+        </div>{/* end relative surface wrapper */}
+
+        {/* ── TABLE LEGS (four, visible in perspective) ── */}
+        <div className="absolute bottom-[-clamp(50px,8vh,80px)] inset-x-0 flex justify-between px-[4%]"
+          style={{ height:"clamp(50px,8vh,80px)" }}>
+          {[0,1,2,3].map(i => (
+            <div key={i} style={{
+              width:"clamp(10px,1.4vw,16px)",
+              height:"100%",
+              background:"linear-gradient(90deg, #1e0e04 0%, #5a3318 40%, #3a2010 70%, #1a0c04 100%)",
+              borderRadius:"2px",
+              boxShadow:"2px 4px 12px rgba(0,0,0,0.6)",
+              transform: i < 2 ? "skewX(-2deg)" : "skewX(2deg)",
+            }} />
+          ))}
+        </div>
+
+        {/* Table ground shadow */}
+        <div className="absolute -bottom-2 left-[5%] right-[5%] h-[8px]" style={{
+          background:"radial-gradient(ellipse, rgba(0,0,0,0.55) 0%, transparent 70%)",
+          filter:"blur(4px)",
+        }} />
+      </div>
 
          {/* book open animation start */}
       <AnimatePresence>
@@ -1294,11 +1255,104 @@ export default function RoomLayout({ children }: { children: React.ReactNode }) 
          {/* book close animation */}
 
 
+        {/* ── LEFT FLOOR LAMP ── */}
+        <div
+          className={`absolute bottom-0 left-[3vw] md:left-[5vw] z-[240] pointer-events-none transition-all duration-700 ${isSubPage ? "opacity-15 blur-sm" : "opacity-100"}`}
+        >
+          {/* Lamp glow on floor/wall */}
+          <div className="absolute pointer-events-none" style={{
+            bottom: "160px", left: "-20px", width: "180px", height: "180px",
+            background: darkMode
+              ? "radial-gradient(ellipse, rgba(251,191,36,0.18) 0%, transparent 70%)"
+              : "radial-gradient(ellipse, rgba(251,191,36,0.10) 0%, transparent 70%)",
+            borderRadius: "50%",
+            transition: "background 1s",
+          }} />
+          {/* Shade — arc floor lamp style */}
+          <div className="absolute" style={{ bottom: "148px", left: "-6px" }}>
+            {/* Outer shade */}
+            <div style={{
+              width: "56px", height: "34px",
+              background: "linear-gradient(180deg, #3a2208 0%, #1e0e04 100%)",
+              clipPath: "polygon(8% 0%, 92% 0%, 100% 100%, 0% 100%)",
+              border: "1.5px solid rgba(198,169,122,0.4)",
+              boxShadow: "inset 0 2px 8px rgba(255,180,80,0.08)",
+            }} />
+            {/* Shade top rim */}
+            <div style={{
+              width: "44px", height: "5px", marginLeft: "6px", marginTop: "-1px",
+              background: "linear-gradient(90deg, #2a1508, #5a3318, #2a1508)",
+              borderRadius: "2px 2px 0 0",
+            }} />
+            {/* Inner glow when dark */}
+            {darkMode && (
+              <motion.div
+                className="absolute"
+                style={{ bottom: "2px", left: "4px", right: "4px", height: "18px",
+                  background: "radial-gradient(ellipse, rgba(251,191,36,0.55) 0%, transparent 80%)",
+                  filter: "blur(4px)",
+                }}
+                animate={{ opacity: [0.7, 1, 0.8, 1, 0.75, 1] }}
+                transition={{ duration: 3.5, repeat: Infinity }}
+              />
+            )}
+            {/* Bulb glow cast downward */}
+            {darkMode && (
+              <motion.div
+                className="absolute pointer-events-none"
+                style={{ top: "28px", left: "-14px", width: "84px", height: "100px",
+                  background: "radial-gradient(ellipse 60% 80% at 50% 0%, rgba(251,191,36,0.25) 0%, transparent 80%)",
+                  filter: "blur(6px)",
+                }}
+                animate={{ opacity: [0.6, 1, 0.7, 1, 0.65, 1] }}
+                transition={{ duration: 4, repeat: Infinity }}
+              />
+            )}
+          </div>
+          {/* Curved arm */}
+          <div className="absolute" style={{
+            bottom: "72px", left: "16px", width: "10px", height: "90px",
+            background: "linear-gradient(90deg, #2a1508 0%, #5a3318 50%, #2a1508 100%)",
+            borderRadius: "3px",
+          }} />
+          {/* Arc curve at top */}
+          <div className="absolute" style={{
+            bottom: "155px", left: "10px", width: "18px", height: "18px",
+            borderTop: "2px solid rgba(198,169,122,0.5)",
+            borderLeft: "2px solid rgba(198,169,122,0.5)",
+            borderRadius: "60% 0 0 0",
+          }} />
+          {/* Main pole */}
+          <div className="absolute" style={{
+            bottom: "0px", left: "19px", width: "8px",
+            height: "155px",
+            background: "linear-gradient(90deg, #1e0e04 0%, #5a3318 45%, #3a2010 100%)",
+            borderRadius: "2px",
+          }} />
+          {/* Base disk */}
+          <div style={{
+            position: "absolute", bottom: "0px", left: "5px",
+            width: "36px", height: "10px",
+            background: "linear-gradient(180deg, #3a2010, #1e0e04)",
+            borderRadius: "4px",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.7)",
+          }} />
+          {/* Base feet */}
+          {[-8, 8].map((off, fi) => (
+            <div key={fi} style={{
+              position: "absolute", bottom: "0px", left: `${23 + off}px`,
+              width: "18px", height: "5px",
+              background: "linear-gradient(180deg, #2a1508, #0f0702)",
+              borderRadius: "0 0 3px 3px",
+            }} />
+          ))}
+        </div>
+
         {/* ── FORWARD RIGHT LANTERN (brought in front of tapestry without touching tapestry z-index or navigation) ── */}
         {/* The original right sconce stays in the background layer (now only left remains there). This duplicate lantern + arm + plate sits at z-[250] with pointer-events-none so the tapestry nav remains fully clickable. */}
         <div
           className={`absolute top-[22vh] md:top-[28vh] right-2 md:right-8 z-[250] pointer-events-none drop-shadow-[0_12px_22px_rgba(0,0,0,0.99)] transition-all duration-700 ${isSubPage ? "opacity-15 blur-sm" : "opacity-100"}`}
-          style={{ transform: "scale(0.55) md:scale(0.85)", transformOrigin: "top center" }}
+          style={{ transform: "scale(0.6)", transformOrigin: "top center" }}
         >
           {/* Wall plate */}
           <div
@@ -1347,7 +1401,7 @@ export default function RoomLayout({ children }: { children: React.ReactNode }) 
                     className="w-2 md:w-3 h-3 md:h-4 rounded-t-full"
                     style={{
                       background: "radial-gradient(ellipse at 40% 70%, #fbbf24, #f97316)",
-                      boxShadow: isMobile ? "0 0 8px 4px rgba(251,191,36,0.5)" : "0 0 20px 8px rgba(251,191,36,0.7), 0 0 40px 12px rgba(249,115,22,0.35)",
+                      boxShadow: isMobile ? "0 0 10px 5px rgba(251,191,36,0.6)" : "0 0 24px 10px rgba(251,191,36,0.85), 0 0 50px 16px rgba(249,115,22,0.45)",
                     }}
                   />
                 </motion.div>
@@ -1356,224 +1410,6 @@ export default function RoomLayout({ children }: { children: React.ReactNode }) 
           </div>
         </div>
 
-        {/* ── CARPET (Floor Level) ── */}
-          <div className="absolute bottom-[2vh] left-[20%] z-[200]">
-            {/* Small Ornate Carpet - smaller on mobile */}
-            <div 
-              className={`relative bg-[#3d0f0f] rounded-[50%] opacity-90 shadow-2xl flex items-center justify-center overflow-hidden ${isMobile ? 'w-24 h-10' : 'w-40 h-16'}`}
-              style={{ 
-                border: "2px solid #c6a97a33",
-                background: "radial-gradient(ellipse, #4a0e0e, #2d0808)" 
-              }}
-            >
-              {/* Carpet Pattern/Texture */}
-              <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "repeating-linear-gradient(45deg, #c6a97a 0px, transparent 2px, transparent 10px)" }} />
-              {/* Carpet Fringe - reduced on mobile */}
-              <div className="absolute inset-x-0 top-0 h-1 flex justify-around">
-                {[...Array(isMobile ? 10 : 20)].map((_, i) => <div key={i} className="w-[1px] h-full bg-[#c6a97a66]" />)}
-              </div>
-              <div className="absolute inset-x-0 bottom-0 h-1 flex justify-around">
-                {[...Array(isMobile ? 10 : 20)].map((_, i) => <div key={i} className="w-[1px] h-full bg-[#c6a97a66]" />)}
-              </div>
-            </div>
-
-            {/* Detailed Cat - simplified on mobile */}
-            <motion.div
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-full cursor-pointer"
-              onClick={handleCatInteraction}
-              animate={{ x: catPosition.x, y: catPosition.y, opacity: isSubPage ? 0.25 : 1 }}
-              transition={{ duration: catState === "walking" ? 2 : 0.5, ease: "easeInOut" }}
-              whileHover={isMobile ? {} : { scale: 1.05 }}
-            >
-              <motion.div
-                className="w-20 md:w-24 h-10 md:h-12 flex items-end relative"
-                animate={{
-                  scaleY: catState === "yawning" ? [1, 0.9, 1.1, 1] : catState === "sleeping" ? [1, 1.02, 1] : 1,
-                  rotate: catState === "walking" ? [0, 2, -2, 0] : 0,
-                }}
-                transition={{ 
-                  scaleY: { duration: 3, repeat: catState === "sleeping" ? Infinity : 0 },
-                  rotate: { duration: 0.4, repeat: catState === "walking" ? Infinity : 0 } 
-                }}
-              >
-                {/* Body — layered radial gradients for fur depth */}
-                <div 
-                  className="w-14 md:w-18 h-8 md:h-10 rounded-full relative shadow-lg"
-                  style={{ 
-                    background: "radial-gradient(ellipse at 40% 30%, #2a2520 0%, #0f0c09 55%, #050302 100%)",
-                    boxShadow: "inset 0 2px 6px rgba(255,255,255,0.06), inset 0 -2px 4px rgba(0,0,0,0.8)"
-                  }}
-                >
-                  {/* Subtle fur highlight streak along spine */}
-                  <div className="absolute top-1 left-3 right-4 h-[2px] rounded-full opacity-10"
-                    style={{ background: "linear-gradient(to right, transparent, #a08060, transparent)" }} />
-                  {/* Chest/belly lighter fur patch */}
-                  <div className="absolute bottom-0 right-1 w-5 h-5 rounded-full opacity-20"
-                    style={{ background: "radial-gradient(circle, #4a3d30, transparent)" }} />
-                </div>
-
-                {/* Detailed Head */}
-                <motion.div
-                  className="absolute left-10 md:left-12 bottom-2 w-8 md:w-10 h-8 md:h-10 rounded-full"
-                  style={{
-                    background: "radial-gradient(ellipse at 45% 35%, #2a2520 0%, #0f0c09 60%, #050302 100%)",
-                    boxShadow: "inset 0 2px 5px rgba(255,255,255,0.06), inset 0 -2px 3px rgba(0,0,0,0.9), 0 2px 8px rgba(0,0,0,0.7)"
-                  }}
-                  animate={{ 
-                    y: catState === "yawning" ? [-2, -5, -2] : 0,
-                    scale: catState === "yawning" ? [1, 1.1, 1] : 1 
-                  }}
-                >
-                  {/* Outer ears */}
-                  <div className="absolute -top-2 left-0.5 w-3 h-4 bg-[#0a0805]" 
-                    style={{ 
-                      clipPath: "polygon(50% 0%, 0% 100%, 100% 100%)",
-                      background: "linear-gradient(to bottom, #181310, #0a0805)"
-                    }} 
-                  />
-                  <div className="absolute -top-2 right-0.5 w-3 h-4 bg-[#0a0805]" 
-                    style={{ 
-                      clipPath: "polygon(50% 0%, 0% 100%, 100% 100%)",
-                      background: "linear-gradient(to bottom, #181310, #0a0805)"
-                    }} 
-                  />
-                  {/* Inner ear pink */}
-                  <div className="absolute -top-1 left-1 w-1.5 h-2.5 opacity-60"
-                    style={{ clipPath: "polygon(50% 0%, 0% 100%, 100% 100%)", background: "#7a3535" }} />
-                  <div className="absolute -top-1 right-1 w-1.5 h-2.5 opacity-60"
-                    style={{ clipPath: "polygon(50% 0%, 0% 100%, 100% 100%)", background: "#7a3535" }} />
-
-                  {/* Eyes — closed when sleeping, opening when yawning, open when awake */}
-                  <div className="absolute top-3.5 left-1.5 w-2 h-1.5 rounded-full overflow-hidden">
-                    {catState === "sleeping" ? (
-                      /* Closed eye — just a curved line */
-                      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[1.5px] rounded-full opacity-70"
-                        style={{ background: "#2a2018" }} />
-                    ) : catState === "yawning" ? (
-                      /* Half-opening eye during yawn */
-                      <motion.div
-                        className="w-full rounded-full overflow-hidden"
-                        initial={{ height: "1.5px" }}
-                        animate={{ height: "100%" }}
-                        transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
-                        style={{ background: darkMode ? "#c1ff3d" : "#4a7a2a", boxShadow: darkMode ? "0 0 6px #c1ff3d" : "none" }}
-                      >
-                        <div className="absolute inset-x-0 top-0 h-full flex justify-center">
-                          <div className="w-[3px] h-full rounded-full" style={{ background: "#080604" }} />
-                        </div>
-                        <div className="absolute top-0 left-0.5 w-[2px] h-[2px] rounded-full bg-white opacity-70" />
-                      </motion.div>
-                    ) : (
-                      /* Fully open eye */
-                      <div className="w-full h-full rounded-full overflow-hidden"
-                        style={{ background: darkMode ? "#c1ff3d" : "#4a7a2a", boxShadow: darkMode ? "0 0 6px #c1ff3d" : "none" }}>
-                        <div className="absolute inset-x-0 top-0 h-full flex justify-center">
-                          <div className="w-[3px] h-full rounded-full" style={{ background: "#080604" }} />
-                        </div>
-                        <div className="absolute top-0 left-0.5 w-[2px] h-[2px] rounded-full bg-white opacity-70" />
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="absolute top-3.5 right-1.5 w-2 h-1.5 rounded-full overflow-hidden">
-                    {catState === "sleeping" ? (
-                      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[1.5px] rounded-full opacity-70"
-                        style={{ background: "#2a2018" }} />
-                    ) : catState === "yawning" ? (
-                      <motion.div
-                        className="w-full rounded-full overflow-hidden"
-                        initial={{ height: "1.5px" }}
-                        animate={{ height: "100%" }}
-                        transition={{ duration: 0.8, delay: 0.7, ease: "easeOut" }}
-                        style={{ background: darkMode ? "#c1ff3d" : "#4a7a2a", boxShadow: darkMode ? "0 0 6px #c1ff3d" : "none" }}
-                      >
-                        <div className="absolute inset-x-0 top-0 h-full flex justify-center">
-                          <div className="w-[3px] h-full rounded-full" style={{ background: "#080604" }} />
-                        </div>
-                        <div className="absolute top-0 left-0.5 w-[2px] h-[2px] rounded-full bg-white opacity-70" />
-                      </motion.div>
-                    ) : (
-                      <div className="w-full h-full rounded-full overflow-hidden"
-                        style={{ background: darkMode ? "#c1ff3d" : "#4a7a2a", boxShadow: darkMode ? "0 0 6px #c1ff3d" : "none" }}>
-                        <div className="absolute inset-x-0 top-0 h-full flex justify-center">
-                          <div className="w-[3px] h-full rounded-full" style={{ background: "#080604" }} />
-                        </div>
-                        <div className="absolute top-0 left-0.5 w-[2px] h-[2px] rounded-full bg-white opacity-70" />
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Nose — small triangular */}
-                  <div className="absolute top-[22px] left-1/2 -translate-x-1/2 w-[5px] h-[4px] opacity-80"
-                    style={{ background: "#7a3535", clipPath: "polygon(50% 100%, 0% 0%, 100% 0%)" }} />
-
-                  {/* Mouth lines */}
-                  <div className="absolute top-[26px] left-1/2 -translate-x-1/2 flex gap-[2px]">
-                    <div className="w-[4px] h-[1px] rounded-full bg-[#3a2a2a] opacity-60" style={{ transform: "rotate(20deg)" }} />
-                    <div className="w-[4px] h-[1px] rounded-full bg-[#3a2a2a] opacity-60" style={{ transform: "rotate(-20deg)" }} />
-                  </div>
-
-                  {/* Whiskers — 3 per side, tapered */}
-                  {/* Left whiskers */}
-                  <div className="absolute top-[20px] left-[-14px] w-[14px] h-[1px] opacity-60"
-                    style={{ background: "linear-gradient(to left, transparent, #c8bfb0)", transform: "rotate(-8deg)", transformOrigin: "right" }} />
-                  <div className="absolute top-[22px] left-[-16px] w-[16px] h-[1px] opacity-50"
-                    style={{ background: "linear-gradient(to left, transparent, #c8bfb0)", transform: "rotate(0deg)", transformOrigin: "right" }} />
-                  <div className="absolute top-[24px] left-[-14px] w-[14px] h-[1px] opacity-60"
-                    style={{ background: "linear-gradient(to left, transparent, #c8bfb0)", transform: "rotate(8deg)", transformOrigin: "right" }} />
-                  {/* Right whiskers */}
-                  <div className="absolute top-[20px] right-[-14px] w-[14px] h-[1px] opacity-60"
-                    style={{ background: "linear-gradient(to right, transparent, #c8bfb0)", transform: "rotate(8deg)", transformOrigin: "left" }} />
-                  <div className="absolute top-[22px] right-[-16px] w-[16px] h-[1px] opacity-50"
-                    style={{ background: "linear-gradient(to right, transparent, #c8bfb0)", transform: "rotate(0deg)", transformOrigin: "left" }} />
-                  <div className="absolute top-[24px] right-[-14px] w-[14px] h-[1px] opacity-60"
-                    style={{ background: "linear-gradient(to right, transparent, #c8bfb0)", transform: "rotate(-8deg)", transformOrigin: "left" }} />
-                </motion.div>
-
-                {/* Front paws — two small rounded bumps */}
-                <div className="absolute bottom-[-4px] right-2 flex gap-1">
-                  <div className="w-3 h-2 rounded-full" style={{ background: "#0f0c09", boxShadow: "inset 0 -1px 2px rgba(255,255,255,0.05)" }} />
-                  <div className="w-3 h-2 rounded-full" style={{ background: "#0f0c09", boxShadow: "inset 0 -1px 2px rgba(255,255,255,0.05)" }} />
-                </div>
-
-                {/* Tail — tapered, curved with tip */}
-                <motion.div
-                  className="absolute -left-6 top-1 origin-right"
-                  animate={{ rotate: [0, 15, -10, 0] }}
-                  transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                >
-                  <div style={{
-                    width: "28px", height: "10px",
-                    background: "linear-gradient(to left, #050302, #1a1510)",
-                    borderRadius: "50% 10% 10% 50%",
-                    boxShadow: "inset 0 1px 2px rgba(255,255,255,0.04)"
-                  }} />
-                  {/* Tail tip slightly lighter */}
-                  <div className="absolute left-0 top-[2px] w-2 h-2 rounded-full opacity-30"
-                    style={{ background: "#3a3028" }} />
-                </motion.div>
-
-                {/* Z's and Yawning */}
-                {catState === "sleeping" && (
-                  <div className="absolute -top-8 left-8">
-                    <motion.span animate={{ opacity: [0, 1, 0], y: [0, -10], x: [0, 5] }} transition={{ duration: 2, repeat: Infinity }} className="absolute text-[#c6a97a] text-[10px] font-serif">z</motion.span>
-                    <motion.span animate={{ opacity: [0, 1, 0], y: [0, -15], x: [0, -3] }} transition={{ duration: 2.5, repeat: Infinity, delay: 0.8 }} className="absolute text-[#c6a97a] text-[12px] left-3 font-serif">Z</motion.span>
-                  </div>
-                )}
-
-                {catState === "yawning" && (
-                  <motion.div
-                    initial={{ scale: 0, opacity: 0 }}
-                    animate={{ scale: [0, 1, 0], opacity: [0, 1, 0], y: [0, -10] }}
-                    transition={{ duration: 1.5 }}
-                    className="absolute left-14 -top-2 text-[#c6a97a] text-lg"
-                  >
-                    ○
-                  </motion.div>
-                )}
-              </motion.div>
-            </motion.div>
-          </div>
 
 
         {/* ── DAY / NIGHT TOGGLE ── */}
@@ -1658,11 +1494,12 @@ export default function RoomLayout({ children }: { children: React.ReactNode }) 
           </motion.div>
             
           {/* ── PAGE CONTENT (Background Layer) ── */}
-      <div className={`relative z-50 w-full h-full overflow-y-auto pointer-events-none ${bookOpen ? 'hidden' : ''}`}>
-        <div className="w-full h-full pointer-events-auto">
-          {children}
+        <div className={`relative z-50 w-full h-full overflow-y-auto pointer-events-none 
+          ${(bookOpen || pathname !== "/") ? 'hidden' : 'block'}`}> 
+          <div className="w-full h-full pointer-events-auto">
+            {children}
+          </div>
         </div>
-      </div>
       </div>
     </ThemeContext.Provider>
   );

@@ -5,3 +5,8 @@
   --color-secondary: #1A1A1A;
   --color-accent: #C6A97A;
 }
+
+@keyframes book-float {
+  0%,100% { transform: translateX(-50%) translateY(-12%) rotateX(30deg) rotateY(-8deg); }
+  50%      { transform: translateX(-50%) translateY(-16%) rotateX(30deg) rotateY(-8deg); }
+}
