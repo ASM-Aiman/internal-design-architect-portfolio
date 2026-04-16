@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, createContext, useEffect, useRef } from "react";
+import { useState, createContext, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 
 export const ThemeContext = createContext({ darkMode: true, openness: 50 });
@@ -14,32 +13,52 @@ export default function RoomLayout({ children }: { children: React.ReactNode }) 
   const [openness, setOpenness] = useState(50);
   const [catState, setCatState] = useState<"sleeping" | "waking" | "yawning" | "walking" | "settling" | "eating">("sleeping");
   const [catPosition, setCatPosition] = useState({ x: 0, y: 0 });
-  const [emberParticles, setEmberParticles] = useState<{ id: number; x: number; delay: number; dur: number }[]>([]);
+  const pathname = usePathname();
+  const router = useRouter();
+  const isSubPage = pathname !== "/";
+  const [bookOpen, setBookOpen] = useState(false);
+  const [mobileTocOpen, setMobileTocOpen] = useState(false);
+
+  const handleCloseBook = () => {
+    setBookOpen(false);
+    if (pathname !== "/") {
+      router.push("/");
+    }
+  };
   const [catHunger, setCatHunger] = useState(45);
   const [currentFood, setCurrentFood] = useState<string | null>(null);
-  const pathname = usePathname();
-  const isSubPage = pathname !== "/";
-  const router = useRouter();
-const [bookOpen, setBookOpen] = useState(false);
-const [mobileTocOpen, setMobileTocOpen] = useState(false);
+
+  const isMobile = useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    return window.innerWidth < 768;
+  }, []);
+
+  const sparkleParticles = useMemo(() => 
+    Array.from({ length: 6 }, (_, i) => ({
+      id: i,
+      x: (i * 17 + 10) % 100,
+      duration: 2 + (i * 0.3),
+    })), []
+  );
+
+  const emberParticles = useMemo(() => [
+    { id: 0, x: -15, delay: 0.3, dur: 2.0 },
+    { id: 1, x: 10, delay: 0.8, dur: 1.8 },
+    { id: 2, x: -5, delay: 1.2, dur: 2.2 },
+    { id: 3, x: 20, delay: 0.5, dur: 1.6 },
+  ], []);
 
   const rayOpacity = openness / 100;
   const curtainWidth = `${50 - openness * 0.4}%`;
+  const curtainFringeCount = useMemo(() => {
+    const num = Math.floor((50 - openness * 0.4) / 8);
+    return Math.max(2, Math.min(num, 15));
+  }, [openness]);
 
-  useEffect(() => {
-    const particles = Array.from({ length: 12 }, (_, i) => ({
-      id: i,
-      x: Math.random() * 60 - 30,
-      delay: Math.random() * 2,
-      dur: 1.5 + Math.random() * 1.5,
-    }));
-    setEmberParticles(particles);
-  }, []);
-
-  // Slowly increase hunger over time (cat gets hungrier if not fed)
+  // Cat hunger system - pre-existing, kept for future use
   useEffect(() => {
     const timer = setInterval(() => {
-      setCatHunger((prev) => Math.min(100, prev + 8));
+      setCatHunger((prev: number) => Math.min(100, prev + 8));
     }, 45000);
     return () => clearInterval(timer);
   }, []);
@@ -181,7 +200,7 @@ const [mobileTocOpen, setMobileTocOpen] = useState(false);
                   }}
                 />
 
-                {/* Stars (night only) */}
+                {/* Stars (night only) - simplified on mobile */}
                 {darkMode &&
                   [
                     { top: "15%", left: "20%" },
@@ -189,13 +208,13 @@ const [mobileTocOpen, setMobileTocOpen] = useState(false);
                     { top: "25%", left: "75%" },
                     { top: "12%", left: "40%" },
                     { top: "30%", left: "30%" },
-                  ].map((s, j) => (
+                  ].slice(0, isMobile ? 3 : 5).map((s, j) => (
                     <motion.div
                       key={j}
                       className="absolute w-[2px] h-[2px] bg-white rounded-full"
                       style={{ top: s.top, left: s.left }}
-                      animate={{ opacity: [0.4, 1, 0.4], scale: [1, 1.3, 1] }}
-                      transition={{ duration: 2 + j * 0.7, repeat: Infinity, delay: j * 0.4 }}
+                      animate={isMobile ? {} : { opacity: [0.4, 1, 0.4], scale: [1, 1.3, 1] }}
+                      transition={isMobile ? { duration: 3, repeat: Infinity } : { duration: 2 + j * 0.7, repeat: Infinity, delay: j * 0.4 }}
                     />
                   ))}
 
@@ -261,7 +280,7 @@ const [mobileTocOpen, setMobileTocOpen] = useState(false);
                   {/* Fringe */}
                   <div className="absolute bottom-0 left-0 right-0 h-10 md:h-14" style={{ borderTop: "1px solid rgba(198,169,122,0.25)" }}>
                     <div className="flex justify-center gap-[3px] pt-1">
-                      {[...Array(Math.max(2, Math.floor(parseInt(curtainWidth) / 8)))].map((_, k) => (
+                      {[...Array(curtainFringeCount)].map((_, k) => (
                         <motion.div
                           key={k}
                           className="w-[3px] md:w-[4px] h-5 md:h-8 rounded-full"
@@ -297,7 +316,7 @@ const [mobileTocOpen, setMobileTocOpen] = useState(false);
                   />
                   <div className="absolute bottom-0 left-0 right-0 h-10 md:h-14" style={{ borderTop: "1px solid rgba(198,169,122,0.25)" }}>
                     <div className="flex justify-center gap-[3px] pt-1">
-                      {[...Array(Math.max(2, Math.floor(parseInt(curtainWidth) / 8)))].map((_, k) => (
+                      {[...Array(curtainFringeCount)].map((_, k) => (
                         <motion.div
                           key={k}
                           className="w-[3px] md:w-[4px] h-5 md:h-8 rounded-full"
@@ -531,16 +550,16 @@ const [mobileTocOpen, setMobileTocOpen] = useState(false);
             {/* Arms container */}
             <div className="absolute top-[80px] md:top-[110px] w-[220px] md:w-[360px] h-[110px] md:h-[150px]">
               {[
-                { left: "4%", armW: "w-20 md:w-30", curve: "border-b border-l rounded-bl-[70px] md:rounded-bl-[100px]", side: "left-0", candleL: "-left-2" },
-                { left: "26%", armW: "w-12 md:w-18", curve: "border-b border-l rounded-bl-[45px] md:rounded-bl-[65px]", side: "left-0", candleL: "-left-2" },
-                { left: "50%", armW: "w-0", curve: "", side: "", candleL: "-left-1" },
-                { left: "auto", right: "26%", armW: "w-12 md:w-18", curve: "border-b border-r rounded-br-[45px] md:rounded-br-[65px]", side: "right-0", candleL: "-right-2" },
-                { left: "auto", right: "4%", armW: "w-20 md:w-30", curve: "border-b border-r rounded-br-[70px] md:rounded-br-[100px]", side: "right-0", candleL: "-right-2" },
+                { left: "4%", right: undefined as string | undefined, armW: "w-20 md:w-30", curve: "border-b border-l rounded-bl-[70px] md:rounded-bl-[100px]", side: "left-0", candleL: "-left-2" },
+                { left: "26%", right: undefined as string | undefined, armW: "w-12 md:w-18", curve: "border-b border-l rounded-bl-[45px] md:rounded-bl-[65px]", side: "left-0", candleL: "-left-2" },
+                { left: "50%", right: undefined as string | undefined, armW: "w-0", curve: "", side: "", candleL: "-left-1" },
+                { left: undefined as string | undefined, right: "26%", armW: "w-12 md:w-18", curve: "border-b border-r rounded-br-[45px] md:rounded-br-[65px]", side: "right-0", candleL: "-right-2" },
+                { left: undefined as string | undefined, right: "4%", armW: "w-20 md:w-30", curve: "border-b border-r rounded-br-[70px] md:rounded-br-[100px]", side: "right-0", candleL: "-right-2" },
               ].map((arm, i) => (
                 <div
                   key={i}
                   className={`absolute bottom-0 h-10 md:h-16 border-[#c6a97a]/55 ${arm.armW} ${arm.curve}`}
-                  style={{ left: (arm as any).right ? "auto" : arm.left, right: (arm as any).right || "auto" }}
+                  style={{ left: arm.right ? "auto" : arm.left, right: arm.right || "auto" }}
                 >
                   {/* Arm end globe */}
                   {i !== 2 && (
@@ -566,27 +585,29 @@ const [mobileTocOpen, setMobileTocOpen] = useState(false);
                       className="absolute bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 w-5 md:w-6 h-[3px] rounded-full border border-[#c6a97a]/60"
                       style={{ background: "#1a1208" }}
                     />
-                    {/* Flame */}
+                    {/* Flame - simplified on mobile */}
                     {darkMode && (
                       <motion.div
                         className="absolute top-0 left-1/2 -translate-x-1/2"
-                        animate={{ scaleY: [1, 1.18, 0.88, 1.12, 1], scaleX: [1, 0.9, 1.1, 0.95, 1] }}
-                        transition={{ duration: 0.45 + i * 0.07, repeat: Infinity }}
+                        animate={isMobile ? {} : { scaleY: [1, 1.18, 0.88, 1.12, 1], scaleX: [1, 0.9, 1.1, 0.95, 1] }}
+                        transition={isMobile ? {} : { duration: 0.45 + i * 0.07, repeat: Infinity }}
                       >
                         {/* Outer flame */}
                         <div
                           className="w-3 md:w-4 h-4 md:h-5 rounded-t-full rounded-bl-full"
                           style={{
                             background: "radial-gradient(ellipse at 40% 80%, #fbbf24, #f97316, #ef4444)",
-                            boxShadow: "0 0 12px 4px rgba(251,191,36,0.6), 0 0 25px 8px rgba(249,115,22,0.35)",
+                            boxShadow: isMobile ? "0 0 6px 2px rgba(251,191,36,0.4)" : "0 0 12px 4px rgba(251,191,36,0.6), 0 0 25px 8px rgba(249,115,22,0.35)",
                             transformOrigin: "center bottom",
                           }}
                         />
-                        {/* Inner blue core */}
-                        <div
-                          className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[4px] md:w-[6px] h-2 md:h-3 rounded-t-full"
-                          style={{ background: "linear-gradient(to top, #93c5fd, #fff)" }}
-                        />
+                        {/* Inner blue core - hidden on mobile */}
+                        {!isMobile && (
+                          <div
+                            className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[4px] md:w-[6px] h-2 md:h-3 rounded-t-full"
+                            style={{ background: "linear-gradient(to top, #93c5fd, #fff)" }}
+                          />
+                        )}
                       </motion.div>
                     )}
                     {!darkMode && (
@@ -598,8 +619,8 @@ const [mobileTocOpen, setMobileTocOpen] = useState(false);
                   </div>
                 </div>
               ))}
-              {/* Lower crystal drops */}
-              {[0, 72, 144, 216, 288].map((angle, i) => (
+              {/* Lower crystal drops - simplified on mobile */}
+              {[0, 72, 144, 216, 288].slice(0, isMobile ? 3 : 5).map((angle, i) => (
                 <motion.div
                   key={`crystal-${i}`}
                   className="absolute"
@@ -608,8 +629,8 @@ const [mobileTocOpen, setMobileTocOpen] = useState(false);
                     left: "50%",
                     transform: `rotate(${angle}deg) translateX(40px)`,
                   }}
-                  animate={{ rotate: [`${angle}deg`, `${angle + 5}deg`, `${angle}deg`] }}
-                  transition={{ duration: 3 + i * 0.4, repeat: Infinity }}
+                  animate={isMobile ? {} : { rotate: [`${angle}deg`, `${angle + 5}deg`, `${angle}deg`] }}
+                  transition={isMobile ? {} : { duration: 3 + i * 0.4, repeat: Infinity }}
                 >
                   <div
                     className="w-2 md:w-3 h-3 md:h-5 rounded-b-full border border-[#c6a97a]/40"
@@ -687,7 +708,7 @@ const [mobileTocOpen, setMobileTocOpen] = useState(false);
                 ))}
               </div>
 
-              {/* Fire */}
+              {/* Fire - simplified on mobile */}
               {darkMode && (
                 <div className="absolute bottom-7 md:bottom-10 left-1/2 -translate-x-1/2 w-24 md:w-40 h-20 md:h-32 mix-blend-screen">
                   {/* Base coals glow */}
@@ -711,15 +732,17 @@ const [mobileTocOpen, setMobileTocOpen] = useState(false);
                     animate={{ scaleY: [1, 1.25, 0.88, 1.18, 1], scaleX: [1, 0.9, 1.1, 0.95, 1] }}
                     transition={{ duration: 0.5, repeat: Infinity, delay: 0.1 }}
                   />
-                  {/* Hot core */}
-                  <motion.div
-                    className="absolute bottom-5 md:bottom-8 left-1/2 -translate-x-1/2 w-6 md:w-10 h-8 md:h-14"
-                    style={{ background: "radial-gradient(ellipse at 50% 80%, #fef3c7, #fbbf24, rgba(253,224,71,0))", filter: "blur(4px)", borderRadius: "50%" }}
-                    animate={{ scaleY: [1, 1.3, 0.9, 1.2, 1] }}
-                    transition={{ duration: 0.4, repeat: Infinity, delay: 0.2 }}
-                  />
-                  {/* Embers */}
-                  {emberParticles.map((p) => (
+                  {/* Hot core - simplified on mobile */}
+                  {!isMobile && (
+                    <motion.div
+                      className="absolute bottom-5 md:bottom-8 left-1/2 -translate-x-1/2 w-6 md:w-10 h-8 md:h-14"
+                      style={{ background: "radial-gradient(ellipse at 50% 80%, #fef3c7, #fbbf24, rgba(253,224,71,0))", filter: "blur(4px)", borderRadius: "50%" }}
+                      animate={{ scaleY: [1, 1.3, 0.9, 1.2, 1] }}
+                      transition={{ duration: 0.4, repeat: Infinity, delay: 0.2 }}
+                    />
+                  )}
+                  {/* Embers - reduced on mobile */}
+                  {emberParticles.slice(0, isMobile ? 4 : 12).map((p) => (
                     <motion.div
                       key={p.id}
                       className="absolute bottom-0 w-[3px] h-[3px] rounded-full"
@@ -806,7 +829,7 @@ const [mobileTocOpen, setMobileTocOpen] = useState(false);
                       style={{ [p === 0 ? "left" : "right"]: "33%", background: "rgba(198,169,122,0.25)" }}
                     />
                   ))}
-                  {/* Candle */}
+                  {/* Candle - simplified on mobile */}
                   <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-3 md:w-4 h-5 md:h-7">
                     <div
                       className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2 md:w-3 h-4 md:h-6"
@@ -815,14 +838,14 @@ const [mobileTocOpen, setMobileTocOpen] = useState(false);
                     {darkMode && (
                       <motion.div
                         className="absolute top-0 left-1/2 -translate-x-1/2"
-                        animate={{ opacity: [0.85, 1, 0.9, 0.95, 0.88, 1], scaleY: [1, 1.08, 0.95, 1.05, 0.98, 1] }}
-                        transition={{ duration: 3, repeat: Infinity }}
+                        animate={isMobile ? {} : { opacity: [0.85, 1, 0.9, 0.95, 0.88, 1], scaleY: [1, 1.08, 0.95, 1.05, 0.98, 1] }}
+                        transition={isMobile ? {} : { duration: 3, repeat: Infinity }}
                       >
                         <div
                           className="w-2 md:w-3 h-3 md:h-4 rounded-t-full"
                           style={{
                             background: "radial-gradient(ellipse at 40% 70%, #fbbf24, #f97316)",
-                            boxShadow: "0 0 20px 8px rgba(251,191,36,0.7), 0 0 40px 12px rgba(249,115,22,0.35)",
+                            boxShadow: isMobile ? "0 0 8px 4px rgba(251,191,36,0.5)" : "0 0 20px 8px rgba(251,191,36,0.7), 0 0 40px 12px rgba(249,115,22,0.35)",
                           }}
                         />
                       </motion.div>
@@ -880,22 +903,22 @@ const [mobileTocOpen, setMobileTocOpen] = useState(false);
     />
     
     {/* 2. SPARKLE PARTICLES */}
-    {[...Array(6)].map((_, i) => (
+    {sparkleParticles.map((p) => (
       <motion.div
-        key={i}
+        key={p.id}
         animate={{ 
           y: [0, -40], 
-          x: [0, (i % 2 === 0 ? 20 : -20)],
+          x: [0, (p.id % 2 === 0 ? 20 : -20)],
           opacity: [0, 1, 0],
           scale: [0, 1.5, 0] 
         }}
         transition={{ 
-          duration: 2 + Math.random() * 2, 
+          duration: p.duration, 
           repeat: Infinity, 
-          delay: i * 0.5 
+          delay: p.id * 0.5 
         }}
         className="absolute w-1 h-1 bg-white rounded-full shadow-[0_0_8px_#fff]"
-        style={{ left: `${Math.random() * 100}%` }}
+        style={{ left: `${p.x}%` }}
       />
     ))}
   </div>
@@ -928,7 +951,7 @@ const [mobileTocOpen, setMobileTocOpen] = useState(false);
     
     {/* Spine Text - Glows on hover */}
     <span className="text-[#c6a97a] text-[9px] md:text-[10px] tracking-[0.4em] font-serif font-bold group-hover:text-white group-hover:drop-shadow-[0_0_12px_#ffcc00] transition-all duration-300">
-      AMR'S BOOK
+      AMR&apos;S BOOK
     </span>
     
     <div className="absolute inset-y-0 right-1 w-[1px] bg-[#c6a97a]/40" />
@@ -947,10 +970,10 @@ const [mobileTocOpen, setMobileTocOpen] = useState(false);
     >
       {/* ── Backdrop with dust-particle feel ── */}
       <div
-        className="absolute inset-0 bg-[#050302]/95 backdrop-blur-xl"
-        onClick={() => { setBookOpen(false); router.push("/"); }}
+        className={`absolute inset-0 bg-[#050302]/95 ${isMobile ? '' : 'backdrop-blur-xl'}`}
+        onClick={handleCloseBook}
         style={{
-          backgroundImage: `
+          backgroundImage: isMobile ? undefined : `
             radial-gradient(ellipse 60% 40% at 50% 50%, rgba(90,50,10,0.18) 0%, transparent 70%),
             url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E")
           `,
@@ -1155,7 +1178,7 @@ const [mobileTocOpen, setMobileTocOpen] = useState(false);
 
             {/* ── Close (top-right) ── */}
             <button
-              onClick={() => { setBookOpen(false); router.push("/"); }}
+              onClick={handleCloseBook}
               className="absolute top-4 right-5 z-30 group flex items-center gap-1.5 font-serif italic text-[10px] tracking-[0.2em] text-[#8b6230]/40 hover:text-[#3b1f06]/70 transition-colors duration-200"
             >
               <span className="hidden sm:inline">close</span>
@@ -1301,7 +1324,7 @@ const [mobileTocOpen, setMobileTocOpen] = useState(false);
                 style={{ [p === 0 ? "left" : "right"]: "33%", background: "rgba(198,169,122,0.25)" }}
               />
             ))}
-            {/* Candle */}
+            {/* Candle - simplified on mobile */}
             <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-3 md:w-4 h-5 md:h-7">
               <div
                 className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2 md:w-3 h-4 md:h-6"
@@ -1310,14 +1333,14 @@ const [mobileTocOpen, setMobileTocOpen] = useState(false);
               {darkMode && (
                 <motion.div
                   className="absolute top-0 left-1/2 -translate-x-1/2"
-                  animate={{ opacity: [0.85, 1, 0.9, 0.95, 0.88, 1], scaleY: [1, 1.08, 0.95, 1.05, 0.98, 1] }}
-                  transition={{ duration: 3, repeat: Infinity }}
+                  animate={isMobile ? {} : { opacity: [0.85, 1, 0.9, 0.95, 0.88, 1], scaleY: [1, 1.08, 0.95, 1.05, 0.98, 1] }}
+                  transition={isMobile ? {} : { duration: 3, repeat: Infinity }}
                 >
                   <div
                     className="w-2 md:w-3 h-3 md:h-4 rounded-t-full"
                     style={{
                       background: "radial-gradient(ellipse at 40% 70%, #fbbf24, #f97316)",
-                      boxShadow: "0 0 20px 8px rgba(251,191,36,0.7), 0 0 40px 12px rgba(249,115,22,0.35)",
+                      boxShadow: isMobile ? "0 0 8px 4px rgba(251,191,36,0.5)" : "0 0 20px 8px rgba(251,191,36,0.7), 0 0 40px 12px rgba(249,115,22,0.35)",
                     }}
                   />
                 </motion.div>
@@ -1328,9 +1351,9 @@ const [mobileTocOpen, setMobileTocOpen] = useState(false);
 
         {/* ── CARPET (Floor Level) ── */}
           <div className="absolute bottom-[2vh] left-[20%] z-[200]">
-            {/* Small Ornate Carpet */}
+            {/* Small Ornate Carpet - smaller on mobile */}
             <div 
-              className="relative w-40 h-16 bg-[#3d0f0f] rounded-[50%] opacity-90 shadow-2xl flex items-center justify-center overflow-hidden"
+              className={`relative bg-[#3d0f0f] rounded-[50%] opacity-90 shadow-2xl flex items-center justify-center overflow-hidden ${isMobile ? 'w-24 h-10' : 'w-40 h-16'}`}
               style={{ 
                 border: "2px solid #c6a97a33",
                 background: "radial-gradient(ellipse, #4a0e0e, #2d0808)" 
@@ -1338,22 +1361,22 @@ const [mobileTocOpen, setMobileTocOpen] = useState(false);
             >
               {/* Carpet Pattern/Texture */}
               <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "repeating-linear-gradient(45deg, #c6a97a 0px, transparent 2px, transparent 10px)" }} />
-              {/* Carpet Fringe */}
+              {/* Carpet Fringe - reduced on mobile */}
               <div className="absolute inset-x-0 top-0 h-1 flex justify-around">
-                {[...Array(20)].map((_, i) => <div key={i} className="w-[1px] h-full bg-[#c6a97a66]" />)}
+                {[...Array(isMobile ? 10 : 20)].map((_, i) => <div key={i} className="w-[1px] h-full bg-[#c6a97a66]" />)}
               </div>
               <div className="absolute inset-x-0 bottom-0 h-1 flex justify-around">
-                {[...Array(20)].map((_, i) => <div key={i} className="w-[1px] h-full bg-[#c6a97a66]" />)}
+                {[...Array(isMobile ? 10 : 20)].map((_, i) => <div key={i} className="w-[1px] h-full bg-[#c6a97a66]" />)}
               </div>
             </div>
 
-            {/* Detailed Cat */}
+            {/* Detailed Cat - simplified on mobile */}
             <motion.div
               className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-full cursor-pointer"
               onClick={handleCatInteraction}
               animate={{ x: catPosition.x, y: catPosition.y, opacity: isSubPage ? 0.25 : 1 }}
               transition={{ duration: catState === "walking" ? 2 : 0.5, ease: "easeInOut" }}
-              whileHover={{ scale: 1.05 }}
+              whileHover={isMobile ? {} : { scale: 1.05 }}
             >
               <motion.div
                 className="w-20 md:w-24 h-10 md:h-12 flex items-end relative"
@@ -1620,13 +1643,9 @@ const [mobileTocOpen, setMobileTocOpen] = useState(false);
           </motion.div>
             
           {/* ── PAGE CONTENT (Background Layer) ── */}
-      <div className="relative z-50 w-full h-full overflow-y-auto pointer-events-none">
+      <div className={`relative z-50 w-full h-full overflow-y-auto pointer-events-none ${bookOpen ? 'hidden' : ''}`}>
         <div className="w-full h-full pointer-events-auto">
-          {/* If pathname is "/" (Home), we show nothing in the background.
-              If we are on a subpage (Gallery/About), we only show children 
-              if the book is CLOSED. This stops the text from appearing behind the book.
-          */}
-          {pathname !== "/" && !bookOpen ? children : null}
+          {children}
         </div>
       </div>
     </ThemeContext.Provider>
