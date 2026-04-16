@@ -73,7 +73,7 @@ const [mobileTocOpen, setMobileTocOpen] = useState(false);
 
   const navLinks = [
     { name: "Home", path: "/" },
-    { name: "Artifacts", path: "/about" },
+    { name: "About me", path: "/about" },
     { name: "Galleria", path: "/gallery" },
     { name: "Contact", path: "/contact" },
   ];

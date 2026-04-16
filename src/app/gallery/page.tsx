@@ -316,16 +316,14 @@ export default function Gallery() {
         </motion.div>
 
         {/* Footer */}
-        <div className="mt-8 flex justify-center opacity-10 shrink-0">
-          <svg width="100" height="40" viewBox="0 0 100 40" fill="none">
-            <path d="M10,20 Q50,0 90,20 Q50,40 10,20" stroke={inkColor} strokeWidth="0.5" />
-          </svg>
-        </div>
-        <div
-          className="text-center text-[9px] italic opacity-30 font-serif shrink-0"
-          style={{ color: inkColor }}
-        >
-          Exhibit Collection MDXXVI
+             {/* ── COPYRIGHT & ATTRIBUTION ── */}
+        <div className="mt-2 text-center flex flex-col gap-1">
+          <p className="text-[8px] font-serif tracking-[0.2em] text-[#8b6230]/50 uppercase">
+            Design & Development by <span className="text-[#8b6230]/80 font-bold">ASM Aiman</span>
+          </p>
+          <p className="text-[7px] font-serif italic text-[#8b6230]/40">
+            © {new Date().getFullYear()} — All rights reserved in perpetuity.
+          </p>
         </div>
       </motion.div>
 
@@ -337,6 +335,7 @@ export default function Gallery() {
           onClose={() => setLightbox(null)}
         />
       )}
+
     </>
   );
 }
