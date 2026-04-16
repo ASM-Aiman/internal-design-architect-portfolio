@@ -4,6 +4,7 @@ import { useContext, useState } from "react";
 import { motion } from "framer-motion";
 import { ThemeContext } from "@/components/layout/RoomLayout";
 
+
 export default function Contact() {
   const { darkMode } = useContext(ThemeContext);
   const [name, setName] = useState("");
@@ -11,7 +12,7 @@ export default function Contact() {
   const [message, setMessage] = useState("");
   const [focused, setFocused] = useState<string | null>(null);
 
-  const gold = "#8b6230"; // Archaic ink color for the book
+  const gold = "#8b6230"; 
   const goldFaint = "rgba(139, 98, 48, 0.2)";
   const textColor = "#3b1f06";
   const placeholderColor = "rgba(139, 98, 48, 0.4)";
@@ -44,12 +45,11 @@ export default function Contact() {
       animate={{ opacity: 1 }}
       className="w-full flex flex-col h-full"
     >
-      <h2 className="text-[#3b1f06] text-xl font-serif italic border-b border-[#8b6230]/20 pb-2 mb-6">
+      <h2 className="text-[#3b1f06] text-xl font-serif italic border-b border-[#8b6230]/20 pb-2 mb-4">
         Inscribe a Message
       </h2>
 
-      <div className="flex flex-col gap-5 flex-1 justify-center">
-        {/* Row 1: Name & Email */}
+      <div className="flex flex-col gap-4 flex-1 justify-center">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="relative">
             <label className="text-[8px] tracking-[0.3em] text-[#8b6230]/70 uppercase font-serif">Appellative</label>
@@ -77,12 +77,11 @@ export default function Contact() {
           </div>
         </div>
 
-        {/* Message Area */}
         <div className="relative">
           <label className="text-[8px] tracking-[0.3em] text-[#8b6230]/70 uppercase font-serif">Your Intentions</label>
           <textarea 
             placeholder="Write your message here..." 
-            rows={4} 
+            rows={3} 
             value={message} 
             onChange={(e) => setMessage(e.target.value)} 
             onFocus={() => setFocused("message")} 
@@ -91,25 +90,45 @@ export default function Contact() {
               ...inputStyle("message"), 
               resize: "none", 
               fontSize: "12px", 
-              lineHeight: "1.6",
+              lineHeight: "1.4",
               fontFamily: "Georgia, serif", 
               textTransform: "none" 
             } as React.CSSProperties}
           />
         </div>
 
-        {/* Dispatch Button */}
-        <div className="mt-4 flex flex-col items-center gap-2">
+        <div className="mt-2 flex flex-col items-center gap-2">
           <button
             onClick={handleGmailDispatch}
             className="w-full py-3 transition-all duration-300 border border-[#8b6230]/30 text-[#8b6230] text-[10px] tracking-[0.4em] uppercase font-serif hover:bg-[#8b6230]/5 hover:border-[#8b6230]"
           >
             Dispatch via Gmail
           </button>
-          <p className="text-[7px] tracking-widest text-[#8b6230]/40 uppercase italic">
-            ✦ Direct to amrarchitect1@gmail.com ✦
-          </p>
         </div>
+
+        {/* ── SOCIALS FOOTER ── */}
+        <div className="flex gap-8">
+  {/* LinkedIn */}
+  <motion.a whileHover={{ y: -2 }} href="your-link" target="_blank" className="text-[#8b6230]/60 hover:text-[#3b1f06]">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/>
+    </svg>
+  </motion.a>
+
+  {/* Instagram */}
+  <motion.a whileHover={{ y: -2 }} href="your-link" target="_blank" className="text-[#8b6230]/60 hover:text-[#3b1f06]">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+      <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+    </svg>
+  </motion.a>
+
+  {/* Facebook */}
+  <motion.a whileHover={{ y: -2 }} href="your-link" target="_blank" className="text-[#8b6230]/60 hover:text-[#3b1f06]">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+    </svg>
+  </motion.a>
+</div>
       </div>
     </motion.div>
   );
