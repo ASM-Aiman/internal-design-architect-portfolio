@@ -15,10 +15,7 @@ export default function RoomLayout({ children }: { children: React.ReactNode }) 
   const [catPosition, setCatPosition] = useState({ x: 0, y: 0 });
   const pathname = usePathname();
   const router = useRouter();
-  const [isSubPage, setIsSubPage] = useState(false);
-  useEffect(() => {
-    setIsSubPage(pathname !== "/");
-  }, [pathname]);
+  const isSubPage = pathname !== "/";
   const [bookOpen, setBookOpen] = useState(false);
   const [mobileTocOpen, setMobileTocOpen] = useState(false);
 
@@ -31,9 +28,9 @@ export default function RoomLayout({ children }: { children: React.ReactNode }) 
   const [catHunger, setCatHunger] = useState(45);
   const [currentFood, setCurrentFood] = useState<string | null>(null);
 
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => {
-    setIsMobile(window.innerWidth < 768);
+  const isMobile = useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    return window.innerWidth < 768;
   }, []);
 
   const sparkleParticles = useMemo(() => 
@@ -284,14 +281,12 @@ export default function RoomLayout({ children }: { children: React.ReactNode }) 
                   <div className="absolute bottom-0 left-0 right-0 h-10 md:h-14" style={{ borderTop: "1px solid rgba(198,169,122,0.25)" }}>
                     <div className="flex justify-center gap-[3px] pt-1">
                       {[...Array(curtainFringeCount)].map((_, k) => (
-                        <div
+                        <motion.div
                           key={k}
-                          className="w-[3px] md:w-[4px] h-5 md:h-8 rounded-full curtain-fringe"
-                          style={{
-                            background: "linear-gradient(to bottom, #c6a97a, #5c4a32, #2a1f10)",
-                            animationDelay: `${k * 0.08}s`,
-                            animationDuration: `${2 + k * 0.1}s`,
-                          }}
+                          className="w-[3px] md:w-[4px] h-5 md:h-8 rounded-full"
+                          style={{ background: "linear-gradient(to bottom, #c6a97a, #5c4a32, #2a1f10)" }}
+                          animate={{ rotate: [0, 1, -1, 0] }}
+                          transition={{ duration: 2 + k * 0.1, repeat: Infinity, delay: k * 0.08 }}
                         />
                       ))}
                     </div>
@@ -322,14 +317,12 @@ export default function RoomLayout({ children }: { children: React.ReactNode }) 
                   <div className="absolute bottom-0 left-0 right-0 h-10 md:h-14" style={{ borderTop: "1px solid rgba(198,169,122,0.25)" }}>
                     <div className="flex justify-center gap-[3px] pt-1">
                       {[...Array(curtainFringeCount)].map((_, k) => (
-                        <div
+                        <motion.div
                           key={k}
-                          className="w-[3px] md:w-[4px] h-5 md:h-8 rounded-full curtain-fringe"
-                          style={{
-                            background: "linear-gradient(to bottom, #c6a97a, #5c4a32, #2a1f10)",
-                            animationDelay: `${k * 0.08}s`,
-                            animationDuration: `${2 + k * 0.1}s`,
-                          }}
+                          className="w-[3px] md:w-[4px] h-5 md:h-8 rounded-full"
+                          style={{ background: "linear-gradient(to bottom, #c6a97a, #5c4a32, #2a1f10)" }}
+                          animate={{ rotate: [0, -1, 1, 0] }}
+                          transition={{ duration: 2 + k * 0.1, repeat: Infinity, delay: k * 0.08 }}
                         />
                       ))}
                     </div>
@@ -481,7 +474,7 @@ export default function RoomLayout({ children }: { children: React.ReactNode }) 
             </div>
             {/* Faulds */}
             <div className="w-12 md:w-18 h-8 md:h-12 mt-[-2px] flex flex-col gap-[2px] z-10">
-              {[...Array(4)].map((_, i) => (
+              {[...Array(4)].map((i) => (
                 <div
                   key={i}
                   className="flex-1 w-full rounded-b-md"
@@ -1297,7 +1290,7 @@ export default function RoomLayout({ children }: { children: React.ReactNode }) 
         {/* ── FORWARD RIGHT LANTERN (brought in front of tapestry without touching tapestry z-index or navigation) ── */}
         {/* The original right sconce stays in the background layer (now only left remains there). This duplicate lantern + arm + plate sits at z-[250] with pointer-events-none so the tapestry nav remains fully clickable. */}
         <div
-          className={`absolute top-[22vh] md:top-[28vh] right-2 md:right-8 z-[250] pointer-events-none drop-shadow-[0_12px_22px_rgba(0,0,0,0.99)] transition-all duration-700 ${isSubPage ? "opacity-15 blur-sm" : "opacity-100"}`}
+          className="absolute top-[22vh] md:top-[28vh] right-2 md:right-8 z-[250] pointer-events-none drop-shadow-[0_12px_22px_rgba(0,0,0,0.99)]"
           style={{ transform: "scale(0.55) md:scale(0.85)", transformOrigin: "top center" }}
         >
           {/* Wall plate */}
@@ -1443,138 +1436,138 @@ export default function RoomLayout({ children }: { children: React.ReactNode }) 
                   <div className="absolute -top-1 right-1 w-1.5 h-2.5 opacity-60"
                     style={{ clipPath: "polygon(50% 0%, 0% 100%, 100% 100%)", background: "#7a3535" }} />
 
-                  {/* Eyes — closed when sleeping, opening when yawning, open when awake */}
-                  <div className="absolute top-3.5 left-1.5 w-2 h-1.5 rounded-full overflow-hidden">
-                    {catState === "sleeping" ? (
-                      /* Closed eye — just a curved line */
-                      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[1.5px] rounded-full opacity-70"
-                        style={{ background: "#2a2018" }} />
-                    ) : catState === "yawning" ? (
-                      /* Half-opening eye during yawn */
-                      <motion.div
-                        className="w-full rounded-full overflow-hidden"
-                        initial={{ height: "1.5px" }}
-                        animate={{ height: "100%" }}
-                        transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
-                        style={{ background: darkMode ? "#c1ff3d" : "#4a7a2a", boxShadow: darkMode ? "0 0 6px #c1ff3d" : "none" }}
-                      >
-                        <div className="absolute inset-x-0 top-0 h-full flex justify-center">
-                          <div className="w-[3px] h-full rounded-full" style={{ background: "#080604" }} />
-                        </div>
-                        <div className="absolute top-0 left-0.5 w-[2px] h-[2px] rounded-full bg-white opacity-70" />
-                      </motion.div>
-                    ) : (
-                      /* Fully open eye */
-                      <div className="w-full h-full rounded-full overflow-hidden"
-                        style={{ background: darkMode ? "#c1ff3d" : "#4a7a2a", boxShadow: darkMode ? "0 0 6px #c1ff3d" : "none" }}>
-                        <div className="absolute inset-x-0 top-0 h-full flex justify-center">
-                          <div className="w-[3px] h-full rounded-full" style={{ background: "#080604" }} />
-                        </div>
-                        <div className="absolute top-0 left-0.5 w-[2px] h-[2px] rounded-full bg-white opacity-70" />
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="absolute top-3.5 right-1.5 w-2 h-1.5 rounded-full overflow-hidden">
-                    {catState === "sleeping" ? (
-                      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[1.5px] rounded-full opacity-70"
-                        style={{ background: "#2a2018" }} />
-                    ) : catState === "yawning" ? (
-                      <motion.div
-                        className="w-full rounded-full overflow-hidden"
-                        initial={{ height: "1.5px" }}
-                        animate={{ height: "100%" }}
-                        transition={{ duration: 0.8, delay: 0.7, ease: "easeOut" }}
-                        style={{ background: darkMode ? "#c1ff3d" : "#4a7a2a", boxShadow: darkMode ? "0 0 6px #c1ff3d" : "none" }}
-                      >
-                        <div className="absolute inset-x-0 top-0 h-full flex justify-center">
-                          <div className="w-[3px] h-full rounded-full" style={{ background: "#080604" }} />
-                        </div>
-                        <div className="absolute top-0 left-0.5 w-[2px] h-[2px] rounded-full bg-white opacity-70" />
-                      </motion.div>
-                    ) : (
-                      <div className="w-full h-full rounded-full overflow-hidden"
-                        style={{ background: darkMode ? "#c1ff3d" : "#4a7a2a", boxShadow: darkMode ? "0 0 6px #c1ff3d" : "none" }}>
-                        <div className="absolute inset-x-0 top-0 h-full flex justify-center">
-                          <div className="w-[3px] h-full rounded-full" style={{ background: "#080604" }} />
-                        </div>
-                        <div className="absolute top-0 left-0.5 w-[2px] h-[2px] rounded-full bg-white opacity-70" />
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Nose — small triangular */}
-                  <div className="absolute top-[22px] left-1/2 -translate-x-1/2 w-[5px] h-[4px] opacity-80"
-                    style={{ background: "#7a3535", clipPath: "polygon(50% 100%, 0% 0%, 100% 0%)" }} />
-
-                  {/* Mouth lines */}
-                  <div className="absolute top-[26px] left-1/2 -translate-x-1/2 flex gap-[2px]">
-                    <div className="w-[4px] h-[1px] rounded-full bg-[#3a2a2a] opacity-60" style={{ transform: "rotate(20deg)" }} />
-                    <div className="w-[4px] h-[1px] rounded-full bg-[#3a2a2a] opacity-60" style={{ transform: "rotate(-20deg)" }} />
-                  </div>
-
-                  {/* Whiskers — 3 per side, tapered */}
-                  {/* Left whiskers */}
-                  <div className="absolute top-[20px] left-[-14px] w-[14px] h-[1px] opacity-60"
-                    style={{ background: "linear-gradient(to left, transparent, #c8bfb0)", transform: "rotate(-8deg)", transformOrigin: "right" }} />
-                  <div className="absolute top-[22px] left-[-16px] w-[16px] h-[1px] opacity-50"
-                    style={{ background: "linear-gradient(to left, transparent, #c8bfb0)", transform: "rotate(0deg)", transformOrigin: "right" }} />
-                  <div className="absolute top-[24px] left-[-14px] w-[14px] h-[1px] opacity-60"
-                    style={{ background: "linear-gradient(to left, transparent, #c8bfb0)", transform: "rotate(8deg)", transformOrigin: "right" }} />
-                  {/* Right whiskers */}
-                  <div className="absolute top-[20px] right-[-14px] w-[14px] h-[1px] opacity-60"
-                    style={{ background: "linear-gradient(to right, transparent, #c8bfb0)", transform: "rotate(8deg)", transformOrigin: "left" }} />
-                  <div className="absolute top-[22px] right-[-16px] w-[16px] h-[1px] opacity-50"
-                    style={{ background: "linear-gradient(to right, transparent, #c8bfb0)", transform: "rotate(0deg)", transformOrigin: "left" }} />
-                  <div className="absolute top-[24px] right-[-14px] w-[14px] h-[1px] opacity-60"
-                    style={{ background: "linear-gradient(to right, transparent, #c8bfb0)", transform: "rotate(-8deg)", transformOrigin: "left" }} />
-                </motion.div>
-
-                {/* Front paws — two small rounded bumps */}
-                <div className="absolute bottom-[-4px] right-2 flex gap-1">
-                  <div className="w-3 h-2 rounded-full" style={{ background: "#0f0c09", boxShadow: "inset 0 -1px 2px rgba(255,255,255,0.05)" }} />
-                  <div className="w-3 h-2 rounded-full" style={{ background: "#0f0c09", boxShadow: "inset 0 -1px 2px rgba(255,255,255,0.05)" }} />
+                {/* Eyes — closed when sleeping, opening when yawning, open when awake */}
+          <div className="absolute top-3.5 left-1.5 w-2 h-1.5 rounded-full overflow-hidden">
+            {catState === "sleeping" ? (
+              /* Closed eye — just a curved line */
+              <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[1.5px] rounded-full opacity-70"
+                style={{ background: "#2a2018" }} />
+            ) : catState === "yawning" ? (
+              /* Half-opening eye during yawn */
+              <motion.div
+                className="w-full rounded-full overflow-hidden"
+                initial={{ height: "1.5px" }}
+                animate={{ height: "100%" }}
+                transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
+                style={{ background: darkMode ? "#c1ff3d" : "#4a7a2a", boxShadow: darkMode ? "0 0 6px #c1ff3d" : "none" }}
+              >
+                <div className="absolute inset-x-0 top-0 h-full flex justify-center">
+                  <div className="w-[3px] h-full rounded-full" style={{ background: "#080604" }} />
                 </div>
-
-                {/* Tail — tapered, curved with tip */}
-                <motion.div
-                  className="absolute -left-6 top-1 origin-right"
-                  animate={{ rotate: [0, 15, -10, 0] }}
-                  transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                >
-                  <div style={{
-                    width: "28px", height: "10px",
-                    background: "linear-gradient(to left, #050302, #1a1510)",
-                    borderRadius: "50% 10% 10% 50%",
-                    boxShadow: "inset 0 1px 2px rgba(255,255,255,0.04)"
-                  }} />
-                  {/* Tail tip slightly lighter */}
-                  <div className="absolute left-0 top-[2px] w-2 h-2 rounded-full opacity-30"
-                    style={{ background: "#3a3028" }} />
-                </motion.div>
-
-                {/* Z's and Yawning */}
-                {catState === "sleeping" && (
-                  <div className="absolute -top-8 left-8">
-                    <motion.span animate={{ opacity: [0, 1, 0], y: [0, -10], x: [0, 5] }} transition={{ duration: 2, repeat: Infinity }} className="absolute text-[#c6a97a] text-[10px] font-serif">z</motion.span>
-                    <motion.span animate={{ opacity: [0, 1, 0], y: [0, -15], x: [0, -3] }} transition={{ duration: 2.5, repeat: Infinity, delay: 0.8 }} className="absolute text-[#c6a97a] text-[12px] left-3 font-serif">Z</motion.span>
-                  </div>
-                )}
-
-                {catState === "yawning" && (
-                  <motion.div
-                    initial={{ scale: 0, opacity: 0 }}
-                    animate={{ scale: [0, 1, 0], opacity: [0, 1, 0], y: [0, -10] }}
-                    transition={{ duration: 1.5 }}
-                    className="absolute left-14 -top-2 text-[#c6a97a] text-lg"
-                  >
-                    ○
-                  </motion.div>
-                )}
+                <div className="absolute top-0 left-0.5 w-[2px] h-[2px] rounded-full bg-white opacity-70" />
               </motion.div>
-            </motion.div>
+            ) : (
+              /* Fully open eye */
+              <div className="w-full h-full rounded-full overflow-hidden"
+                style={{ background: darkMode ? "#c1ff3d" : "#4a7a2a", boxShadow: darkMode ? "0 0 6px #c1ff3d" : "none" }}>
+                <div className="absolute inset-x-0 top-0 h-full flex justify-center">
+                  <div className="w-[3px] h-full rounded-full" style={{ background: "#080604" }} />
+                </div>
+                <div className="absolute top-0 left-0.5 w-[2px] h-[2px] rounded-full bg-white opacity-70" />
+              </div>
+            )}
           </div>
 
+          <div className="absolute top-3.5 right-1.5 w-2 h-1.5 rounded-full overflow-hidden">
+            {catState === "sleeping" ? (
+              <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[1.5px] rounded-full opacity-70"
+                style={{ background: "#2a2018" }} />
+            ) : catState === "yawning" ? (
+              <motion.div
+                className="w-full rounded-full overflow-hidden"
+                initial={{ height: "1.5px" }}
+                animate={{ height: "100%" }}
+                transition={{ duration: 0.8, delay: 0.7, ease: "easeOut" }}
+                style={{ background: darkMode ? "#c1ff3d" : "#4a7a2a", boxShadow: darkMode ? "0 0 6px #c1ff3d" : "none" }}
+              >
+                <div className="absolute inset-x-0 top-0 h-full flex justify-center">
+                  <div className="w-[3px] h-full rounded-full" style={{ background: "#080604" }} />
+                </div>
+                <div className="absolute top-0 left-0.5 w-[2px] h-[2px] rounded-full bg-white opacity-70" />
+              </motion.div>
+            ) : (
+              <div className="w-full h-full rounded-full overflow-hidden"
+                style={{ background: darkMode ? "#c1ff3d" : "#4a7a2a", boxShadow: darkMode ? "0 0 6px #c1ff3d" : "none" }}>
+                <div className="absolute inset-x-0 top-0 h-full flex justify-center">
+                  <div className="w-[3px] h-full rounded-full" style={{ background: "#080604" }} />
+                </div>
+                <div className="absolute top-0 left-0.5 w-[2px] h-[2px] rounded-full bg-white opacity-70" />
+              </div>
+            )}
+          </div>
+
+        {/* Nose — small triangular */}
+        <div className="absolute top-[22px] left-1/2 -translate-x-1/2 w-[5px] h-[4px] opacity-80"
+          style={{ background: "#7a3535", clipPath: "polygon(50% 100%, 0% 0%, 100% 0%)" }} />
+
+        {/* Mouth lines */}
+        <div className="absolute top-[26px] left-1/2 -translate-x-1/2 flex gap-[2px]">
+          <div className="w-[4px] h-[1px] rounded-full bg-[#3a2a2a] opacity-60" style={{ transform: "rotate(20deg)" }} />
+          <div className="w-[4px] h-[1px] rounded-full bg-[#3a2a2a] opacity-60" style={{ transform: "rotate(-20deg)" }} />
+        </div>
+
+        {/* Whiskers — 3 per side, tapered */}
+        {/* Left whiskers */}
+        <div className="absolute top-[20px] left-[-14px] w-[14px] h-[1px] opacity-60"
+          style={{ background: "linear-gradient(to left, transparent, #c8bfb0)", transform: "rotate(-8deg)", transformOrigin: "right" }} />
+        <div className="absolute top-[22px] left-[-16px] w-[16px] h-[1px] opacity-50"
+          style={{ background: "linear-gradient(to left, transparent, #c8bfb0)", transform: "rotate(0deg)", transformOrigin: "right" }} />
+        <div className="absolute top-[24px] left-[-14px] w-[14px] h-[1px] opacity-60"
+          style={{ background: "linear-gradient(to left, transparent, #c8bfb0)", transform: "rotate(8deg)", transformOrigin: "right" }} />
+        {/* Right whiskers */}
+        <div className="absolute top-[20px] right-[-14px] w-[14px] h-[1px] opacity-60"
+          style={{ background: "linear-gradient(to right, transparent, #c8bfb0)", transform: "rotate(8deg)", transformOrigin: "left" }} />
+        <div className="absolute top-[22px] right-[-16px] w-[16px] h-[1px] opacity-50"
+          style={{ background: "linear-gradient(to right, transparent, #c8bfb0)", transform: "rotate(0deg)", transformOrigin: "left" }} />
+        <div className="absolute top-[24px] right-[-14px] w-[14px] h-[1px] opacity-60"
+          style={{ background: "linear-gradient(to right, transparent, #c8bfb0)", transform: "rotate(-8deg)", transformOrigin: "left" }} />
+      </motion.div>
+
+      {/* Front paws — two small rounded bumps */}
+      <div className="absolute bottom-[-4px] right-2 flex gap-1">
+        <div className="w-3 h-2 rounded-full" style={{ background: "#0f0c09", boxShadow: "inset 0 -1px 2px rgba(255,255,255,0.05)" }} />
+        <div className="w-3 h-2 rounded-full" style={{ background: "#0f0c09", boxShadow: "inset 0 -1px 2px rgba(255,255,255,0.05)" }} />
+      </div>
+
+      {/* Tail — tapered, curved with tip */}
+      <motion.div 
+        className="absolute -left-6 top-1 origin-right"
+        animate={{ rotate: [0, 15, -10, 0] }}
+        transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+      >
+        <div style={{
+          width: "28px", height: "10px",
+          background: "linear-gradient(to left, #050302, #1a1510)",
+          borderRadius: "50% 10% 10% 50%",
+          boxShadow: "inset 0 1px 2px rgba(255,255,255,0.04)"
+        }} />
+        {/* Tail tip slightly lighter */}
+        <div className="absolute left-0 top-[2px] w-2 h-2 rounded-full opacity-30"
+          style={{ background: "#3a3028" }} />
+      </motion.div>
+
+      {/* Z's and Yawning */}
+      {catState === "sleeping" && (
+        <div className="absolute -top-8 left-8">
+          <motion.span animate={{ opacity: [0, 1, 0], y: [0, -10], x: [0, 5] }} transition={{ duration: 2, repeat: Infinity }} className="absolute text-[#c6a97a] text-[10px] font-serif">z</motion.span>
+          <motion.span animate={{ opacity: [0, 1, 0], y: [0, -15], x: [0, -3] }} transition={{ duration: 2.5, repeat: Infinity, delay: 0.8 }} className="absolute text-[#c6a97a] text-[12px] left-3 font-serif">Z</motion.span>
+        </div>
+      )}
+      
+      {catState === "yawning" && (
+        <motion.div 
+          initial={{ scale: 0, opacity: 0 }} 
+          animate={{ scale: [0, 1, 0], opacity: [0, 1, 0], y: [0, -10] }} 
+          transition={{ duration: 1.5 }} 
+          className="absolute left-14 -top-2 text-[#c6a97a] text-lg"
+        >
+          ○
+        </motion.div>
+      )}
+    </motion.div>
+  </motion.div>
+</div>
+</div>
 
         {/* ── DAY / NIGHT TOGGLE ── */}
         <div className="absolute top-3 md:top-8 right-3 md:right-8 z-[100]">
@@ -1632,14 +1625,6 @@ export default function RoomLayout({ children }: { children: React.ReactNode }) 
             />
 
             <style jsx>{`
-              @keyframes fringe-sway {
-                0%, 100% { transform: rotate(0deg); }
-                25%       { transform: rotate(1deg); }
-                75%       { transform: rotate(-1deg); }
-              }
-              .curtain-fringe {
-                animation: fringe-sway linear infinite;
-              }
               input[type=range]::-webkit-slider-runnable-track { 
                 width: 100%; height: 4px; background: #1a120c; border-radius: 9999px; border: 1px solid #3a2f22; 
               }
@@ -1662,7 +1647,6 @@ export default function RoomLayout({ children }: { children: React.ReactNode }) 
         <div className="w-full h-full pointer-events-auto">
           {children}
         </div>
-      </div>
       </div>
     </ThemeContext.Provider>
   );
