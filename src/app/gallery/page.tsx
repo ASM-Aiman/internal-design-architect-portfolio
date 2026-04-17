@@ -12,11 +12,27 @@ const categories = [
     projects: [
       {
         id: "int-1",
-        title: "The Amber Study",
+        title: "Hostel Design – UVPA Colombo",
         year: "MMXXIII",
-        description: "A private study bathed in warm candlelight tones — raw walnut shelving and aged leather.",
-        images: ["/assets/images/amber-study.jpg", "/assets/images/amber-study-sketch.jpg", "/assets/images/amber-study-detail.jpg"]
-      }
+        description: "The student hostel, located at No. 217, Sri Saddharma Mawatha, Colombo 10, is designed for multidisciplinary students of the Faculty of Visual Arts, University of Visual & Performing Arts, Colombo. The design is inspired by the philosophy of Yin and Yang, translating the idea of balance into a spatial experience that harmonizes work and rest. Organized across five levels, the building separates functions vertically, with communal and administrative spaces on the ground floor, dedicated study areas at the core, and restful bedroom zones positioned above and below to create a rhythmic balance between activity and retreat. The use of exposed concrete establishes a raw, neutral backdrop that reflects stability and focus, while mahogany wood elements introduce warmth and human scale through partitions and furniture. Accommodating 22 students, the hostel becomes more than a living space—it is a carefully curated environment that supports creativity, discipline, and well-being within a dense urban context.",
+        images: ["/assets/images/s1-1.png", "/assets/images/s1-2.png", "/assets/images/s1-3.png", "/assets/images/s1-4.png", "/assets/images/s1-5.png", "/assets/images/s1-6.png", "/assets/images/s1-7.png", "/assets/images/s1-8.png", "/assets/images/s1-9.png", "/assets/images/s1-10.png", "/assets/images/s1-11.png", "/assets/images/s1-12.png", "/assets/images/s1-13.png", "/assets/images/s1-14.png", "/assets/images/s1-15.png", "/assets/images/s1-16.png", "/assets/images/s1-17.png", "/assets/images/s1-18.png", "/assets/images/s1-19.png", "/assets/images/s1-20.png", "/assets/images/s1-21.png"]
+      },
+          {
+        id: "int-2",
+        title: "Dilly & Carlo Mobile Retail Kiosk",
+        year: "MMXXIII",
+        description: "The Dilly & Carlo kiosk, located within the historic context of Galle Fort, is conceived as a compact yet expressive retail intervention that reflects the brand’s identity of timeless elegance and cultural refinement. Responding to the fort’s rich colonial fabric and pedestrian character, the design is inspired by the idea of a central bloom, organizing the space around a subtle focal point that encourages intuitive movement and interaction. The kiosk integrates Sri Lankan craftsmanship through materials such as cane, wood, and soft fabric textures, while maintaining a contemporary language of clean lines and minimal forms that harmonize with the heritage surroundings. Carefully planned zoning — from the welcoming entrance display to the central shelving and rear functional areas — ensures both spatial efficiency and visual clarity within a limited footprint. Transparent elements enhance visibility and invite engagement, while the overall composition balances openness and intimacy, echoing both the spatial qualities of Galle Fort and the philosophy of the brand. The result is a refined, culturally responsive retail experience that creates a meaningful connection between place, product, and user.",
+        images: ["/assets/images/s2-1.png", "/assets/images/s2-2.png", "/assets/images/s2-3.png", "/assets/images/s2-4.png", "/assets/images/s2-5.png", "/assets/images/s2-6.png", "/assets/images/s2-7.png", "/assets/images/s2-8.png", "/assets/images/s2-9.png"]
+      },
+       {
+        id: "int-3",
+        title: "Colombo Campus Bus Stop",
+        year: "MMXXIII",
+        description: "This project reimagines the Colombo Campus bus stop as a contemporary interpretation of the Sri Lankan *ambalama*, focusing on its philosophy of shade, comfort, and community rather than its physical form. Retaining the existing steel structure, the design introduces a living creeper canopy for natural cooling, air-purifying moss panels with an activated carbon filter to reduce roadside pollution, passive-cooling seating, and permeable self-cooling paving. An existing advertising panel is repurposed into an interactive educational display curated by university students. Together, these strategies transform the bus stop into a sustainable urban oasis that enhances environmental performance while serving as a meaningful and comfortable space for everyday commuters.",
+        images: ["/assets/images/s3-1.png", "/assets/images/s3-2.png", "/assets/images/s3-3.png", "/assets/images/s3-4.png", "/assets/images/s3-5.png"]
+      },
+
+
     ]
   },
   {
@@ -27,10 +43,17 @@ const categories = [
     projects: [
       {
         id: "fur-1",
-        title: "The Cartographer's Desk",
+        title: "Lotus-inspired chair",
         year: "MMXXIII",
-        description: "A bespoke writing desk crafted from reclaimed oak with brass hardware.",
-        images: ["/assets/images/cartographer-desk.jpg", "/assets/images/cartographer-desk-sketch.jpg"]
+        description: "The lotus-inspired chair is designed as a sculptural expression of calmness, balance, and cultural symbolism, drawing from the elegant form of the lotus flower. The design translates the organic curves of blooming petals into a functional seating element, where each line and surface is carefully shaped to evoke a sense of softness and fluidity. Rooted in Sri Lankan cultural identity, the chair embodies the idea of purity and serenity, while its minimal yet expressive form aligns with contemporary design sensibilities. Crafted using natural materials, the piece highlights texture, craftsmanship, and material honesty, allowing it to age gracefully over time. Beyond its function, the chair acts as a statement object within a space, inviting users to pause, sit, and experience a moment of stillness — making it not just furniture, but an emotional and spatial focal point.",
+        images: ["/assets/images/f1-1.png", "/assets/images/f1-2.png"]
+      },
+          {
+        id: "fur-2",
+        title: "Cascade Cantilever",
+        year: "MMXXIII",
+        description: "This office chair is designed in the style of the Frank Lloyd Wright movement, drawing inspiration from his iconic architectural masterpiece, Fallingwater.The design reflects Wright's philosophy of harmony between nature, structure, and function. The chair is crafted entirely from teak wood, showcasing warm natural tones and clean horizontal lines reminiscent of the cantilevered planes seen in Fallingwater. The backrest is woven with synthetic wire, adding texture and lightness while emphasizing craftsmanship and geometric order. The seat is cushioned with synthetic leather, ensuring comfort while maintaining a refined, modern aesthetic.Designed to be rotatable, the chair balances practicality with organic elegance, embodying Frank Lloyd Wright's vision of functional design seamlessly integrated with natural beauty and architectural rhythm.",
+        images: ["/assets/images/f2-1.png", "/assets/images/f2-2.jpeg", "/assets/images/f2-3.jpeg", "/assets/images/f2-4.jpeg"]
       }
     ]
   }
