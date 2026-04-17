@@ -57,7 +57,7 @@ export default function Home() {
         >
           <div className={`h-[1px] w-12 ${darkMode ? "bg-[#c6a97a]/40" : "bg-[#8a724d]/40"}`} />
           <span className={`text-xs tracking-[0.3em] ${darkMode ? "text-[#c6a97a]/60" : "text-[#8a724d]/60"}`}>
-            ARCHITECT
+            INTERIOR ARCHITECT
           </span>
           <div className={`h-[1px] w-12 ${darkMode ? "bg-[#c6a97a]/40" : "bg-[#8a724d]/40"}`} />
         </motion.div>
