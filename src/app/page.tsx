@@ -97,7 +97,7 @@ export default function Home() {
 
           {/* Year */}
           <div className={`${darkMode ? "text-[#c6a97a]" : "text-[#8a724d]"}`}>
-            <p className="text-[10px] tracking-[0.2em] uppercase opacity-60 mb-1">Graduating</p>
+            <p className="text-[10px] tracking-[0.2em] uppercase opacity-60 mb-1">Portfolio</p>
             <p className="text-2xl font-serif font-light">2026</p>
           </div>
         </motion.div>
