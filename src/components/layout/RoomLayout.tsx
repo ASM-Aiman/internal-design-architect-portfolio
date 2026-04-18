@@ -1269,101 +1269,122 @@ const navLinks = [
             </svg>
 
            
-            {/* ── Mobile TOC toggle ── */}
-            <button
-              className="md:hidden absolute top-4 left-4 z-30 flex items-center gap-1.5 font-serif italic text-[10px] tracking-[0.2em] text-[#8b6230]/50 hover:text-[#3b1f06]/70 transition-colors"
-              onClick={() => setMobileTocOpen((v) => !v)}
-            >
-              <svg width="14" height="12" viewBox="0 0 14 12" fill="none">
-                <line x1="0" y1="1.5" x2="14" y2="1.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-                <line x1="0" y1="6"   x2="10" y2="6"   stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-                <line x1="0" y1="10.5" x2="14" y2="10.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-              </svg>
-              <span>contents</span>
-            </button>
+   {/* ── Mobile TOC toggle (Illuminated Tab) ── */}
+<button
+  className="md:hidden absolute top-4 left-4 z-30 flex items-center gap-2 px-3 py-1.5 rounded-sm transition-all duration-500 group"
+  onClick={() => setMobileTocOpen((v) => !v)}
+  style={{
+    background: "rgba(232, 213, 176, 0.4)", // Matches paper color but translucent
+    border: "0.5px solid rgba(139, 98, 48, 0.2)",
+    backdropFilter: "blur(4px)" // Corrected property name from backdropBlur
+  }}
+>
+  {/* The Glowing Aura behind the text */}
+  <motion.div
+    animate={{ opacity: [0.1, 0.4, 0.1], scale: [1, 1.1, 1] }}
+    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+    className="absolute inset-0 bg-[#ffcc00] blur-md rounded-sm -z-10"
+  />
 
-            {/* ── Mobile TOC overlay ── */}
-            <AnimatePresence>
-              {mobileTocOpen && (
-                <motion.div
-                  initial={{ x: "-100%", opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  exit={{ x: "-100%", opacity: 0 }}
-                  className="md:hidden absolute inset-0 z-20 flex flex-col p-8 pt-14"
-                  style={{
-                    background: "#e8d5b0",
-                    backgroundImage: "url('https://www.transparenttextures.com/patterns/aged-paper.png')",
-                  }}
-                >
-                  <button 
-                    className="absolute top-4 right-4 text-[#3b1f06]/40"
-                    onClick={() => setMobileTocOpen(false)}
-                  >
-                    ✕
-                  </button>
+  {/* Icon with subtle shake to grab attention */}
+  <motion.div
+    animate={{ x: [0, 2, 0] }}
+    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+    className="text-[#3b1f06]"
+  >
+    <svg width="16" height="14" viewBox="0 0 14 12" fill="none">
+      <line x1="0" y1="1.5" x2="14" y2="1.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <line x1="0" y1="6"   x2="10" y2="6"   stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <line x1="0" y1="10.5" x2="14" y2="10.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  </motion.div>
 
-                  <nav className="flex flex-col gap-6">
-                    {navLinks.map((item, i) => {
-                      const isCloseAction = item.name === "Close Book";
-                      const isResume = item.name === "Resume";
+  <span className="font-serif italic text-[11px] tracking-[0.25em] text-[#3b1f06] font-bold uppercase">
+    contents
+  </span>
+</button>
 
-                      // 1. MOBILE CLOSE ACTION
-                      if (isCloseAction) {
-                        return (
-                          <button
-                            key={item.name}
-                            onClick={() => {
-                              setMobileTocOpen(false); // Close the menu
-                              handleCloseBook();      // Close the actual book
-                            }}
-                            className="flex items-baseline gap-3 font-serif text-base text-[#8b0000] font-bold"
-                          >
-                            <span className="text-[10px] tracking-widest opacity-40">
-                              {["I", "II", "III", "IV", "V"][i]}
-                            </span>
-                            <span className="tracking-wider uppercase">{item.name}</span>
-                          </button>
-                        );
-                      }
+         {/* ── Mobile TOC overlay ── */}
+<AnimatePresence>
+  {mobileTocOpen && (
+    <motion.div
+      initial={{ x: "-100%", opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      exit={{ x: "-100%", opacity: 0 }}
+      className="md:hidden absolute inset-0 z-[100] flex flex-col p-10 pt-20"
+      style={{
+        background: "#e8d5b0",
+        backgroundImage: "url('https://www.transparenttextures.com/patterns/aged-paper.png')",
+        boxShadow: "inset -20px 0 40px rgba(0,0,0,0.1)"
+      }}
+    >
+      {/* Background Soft Glow for the Text Area */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-[#ffcc00]/10 blur-[80px] pointer-events-none" />
 
-                      // 2. MOBILE RESUME ACTION
-                      if (isResume) {
-                        return (
-                          <a
-                            key={item.name}
-                            href={item.path}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={() => setMobileTocOpen(false)}
-                            className="flex items-baseline gap-3 font-serif text-base text-[#5c3810]"
-                          >
-                            <span className="text-[10px] tracking-widest opacity-40">
-                              {["I", "II", "III", "IV", "V"][i]}
-                            </span>
-                            <span className="tracking-wider">{item.name} ↗</span>
-                          </a>
-                        );
-                      }
+      <button 
+        className="absolute top-6 right-6 w-10 h-10 flex items-center justify-center rounded-full border border-[#3b1f06]/10 text-[#3b1f06]/60 text-xl"
+        onClick={() => setMobileTocOpen(false)}
+      >
+        ✕
+      </button>
 
-                      // 3. MOBILE STANDARD LINKS
-                      return (
-                        <Link 
-                          key={item.name} 
-                          href={item.path}
-                          onClick={() => setMobileTocOpen(false)} // Close menu when navigating
-                          className="flex items-baseline gap-3 font-serif text-base text-[#5c3810]"
-                        >
-                          <span className="text-[10px] tracking-widest opacity-40">
-                            {["I", "II", "III", "IV", "V"][i]}
-                          </span>
-                          <span className="tracking-wider">{item.name}</span>
-                        </Link>
-                      );
-                    })}
-                  </nav>
-                </motion.div>
-              )}
-            </AnimatePresence>
+      <div className="mb-12 border-b border-[#3b1f06]/10 pb-4">
+        <h2 className="font-serif italic text-2xl text-[#3b1f06]">Index</h2>
+        <p className="text-[9px] tracking-[0.3em] uppercase opacity-40 mt-1">Design Folio</p>
+      </div>
+
+      <nav className="flex flex-col gap-8 relative z-10">
+        {navLinks.map((item, i) => {
+          const isCloseAction = item.name === "Close Book";
+          const isResume = item.name === "Resume";
+
+          const linkClass = "flex items-center gap-5 font-serif text-lg transition-all active:scale-95";
+
+          // 1. MOBILE CLOSE ACTION
+          if (isCloseAction) {
+            return (
+              <button
+                key={item.name}
+                onClick={() => {
+                  setMobileTocOpen(false);
+                  handleCloseBook();
+                }}
+                className={`${linkClass} text-[#8b0000] mt-4`}
+              >
+                <span className="text-xs opacity-40 italic font-sans">{["I", "II", "III", "IV", "V"][i]}</span>
+                <span className="tracking-widest uppercase font-bold border-b border-[#8b0000]/20">{item.name}</span>
+              </button>
+            );
+          }
+
+          // 2. MOBILE RESUME / LINKS
+          const content = (
+            <>
+              <span className="text-xs opacity-40 italic font-sans">{["I", "II", "III", "IV", "V"][i]}</span>
+              <span className="tracking-wide text-[#3b1f06]">{item.name} {isResume && "↗"}</span>
+            </>
+          );
+
+          return isResume ? (
+            <a key={item.name} href={item.path} target="_blank" rel="noopener noreferrer" 
+               onClick={() => setMobileTocOpen(false)} className={linkClass}>
+              {content}
+            </a>
+          ) : (
+            <Link key={item.name} href={item.path} onClick={() => setMobileTocOpen(false)} className={linkClass}>
+              {content}
+            </Link>
+          );
+        })}
+      </nav>
+
+      <div className="mt-auto text-center opacity-30">
+        <div className="text-[18px] mb-2">❧</div>
+        <p className="text-[8px] tracking-[0.4em] uppercase">Amr Abdullah</p>
+      </div>
+    </motion.div>
+  )}
+</AnimatePresence>
 
             {/* ── Page content ── */}
             <div className="relative z-10 h-full overflow-y-auto p-6 sm:p-10 md:p-12 pt-12">
@@ -1395,7 +1416,7 @@ const navLinks = [
                       </span>
                     </div>
                     <p className="italic font-serif text-[#5c3810]/50 text-sm tracking-widest">
-                      Select a chapter.
+                      Select a chapter by clicking on contents.
                     </p>
                     <div className="w-8 h-[0.5px] bg-[#8b6230]/25 mt-1" />
                   </div>
